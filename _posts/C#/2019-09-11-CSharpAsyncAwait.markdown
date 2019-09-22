@@ -44,46 +44,46 @@ keywords: C#,Programming Language,異步執行,Aync, Await
 
 ```csharp
 public partial class Form1 : Form
+{
+    public Form1()
     {
-        public Form1()
-        {
-            InitializeComponent();
-        }
-
-        private int CountChars()
-        {
-            int count = 0;
-            // 讀取文件裡的字元
-            using(StreamReader reader = new StreamReader("C:\\Users\\ryanchen34057\\Desktop\\test.txt"))
-            {
-                // 將所有內容讀進記憶體暫存
-                string content = reader.ReadToEnd();
-                count = content.Length;
-
-                // 暫停5秒鐘
-                Thread.Sleep(5000);
-            }
-            return count;
-        }
-        // 同步處理
-        private void Btn_processFile_Click(object sender, EventArgs e)
-        {
-            label_message.Text = "處理文件中.....";
-            int count = CountChars();
-            label_message.Text = "總共有" + count.ToString() + "個字";
-        }
-
-        // 異步處理
-        private async void Button_async_Click(object sender, EventArgs e)
-        {
-            Task<int> task = new Task<int>(CountChars);
-            task.Start();
-
-            label_message.Text = "處理文件中.....";
-            int count = await task;
-            label_message.Text = "總共有" + count.ToString() + "個字";
-        }
+        InitializeComponent();
     }
+
+    private int CountChars()
+    {
+        int count = 0;
+        // 讀取文件裡的字元
+        using(StreamReader reader = new StreamReader("C:\\Users\\ryanchen34057\\Desktop\\test.txt"))
+        {
+            // 將所有內容讀進記憶體暫存
+            string content = reader.ReadToEnd();
+            count = content.Length;
+
+            // 暫停5秒鐘
+            Thread.Sleep(5000);
+        }
+        return count;
+    }
+    // 同步處理
+    private void Btn_processFile_Click(object sender, EventArgs e)
+    {
+        label_message.Text = "處理文件中.....";
+        int count = CountChars();
+        label_message.Text = "總共有" + count.ToString() + "個字";
+    }
+
+    // 異步處理
+    private async void Button_async_Click(object sender, EventArgs e)
+    {
+        Task<int> task = new Task<int>(CountChars);
+        task.Start();
+
+        label_message.Text = "處理文件中.....";
+        int count = await task;
+        label_message.Text = "總共有" + count.ToString() + "個字";
+    }
+}
 ```
 
 
@@ -105,16 +105,16 @@ public partial class Form1 : Form
 ## 異步處理程式碼
 ```csharp
 // 異步處理
-    private async void Button_async_Click(object sender, EventArgs e)
-    {
-        Task<int> task = new Task<int>(CountChars);
-        task.Start();
+private async void Button_async_Click(object sender, EventArgs e)
+{
+    Task<int> task = new Task<int>(CountChars);
+    task.Start();
 
-        label_message.Text = "處理文件中.....";
-        // 用await來讓程式等task執行完後再繼續
-        int count = await task;
-        label_message.Text = "總共有" + count.ToString() + "個字";
-    }
+    label_message.Text = "處理文件中.....";
+    // 用await來讓程式等task執行完後再繼續
+    int count = await task;
+    label_message.Text = "總共有" + count.ToString() + "個字";
+}
 ```
 
 首先，異步處理的函數必須用`Task`這個物件包起來，`Task`是一個可以處理泛型的物件，`<>`裡的是函數會回傳的型別，然後呼叫`start`。
