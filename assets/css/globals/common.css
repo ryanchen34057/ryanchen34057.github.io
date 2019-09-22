@@ -1,4 +1,4 @@
-@import url(//cdn.jsdelivr.net/npm/taipei-sans-tc/dist/Light/TaipeiSansTCBeta-Light.css);
+@import url(//cdn.jsdelivr.net/npm/taipei-sans-tc/dist/Bold/TaipeiSansTCBeta-Bold.css);
 .site-header,.site-header-actions .select-menu {
     position: relative
 }
@@ -6,7 +6,7 @@
 .markdown-body,body {
     /* font-family: Arial,"Hiragino Sans GB","冬青黑","Microsoft YaHei","微软雅黑",SimSun,"宋体",Helvetica,Tahoma,Arial sans-serif; */
     font-family: 'Taipei Sans TC', 'Space Mono', monospace,"Helvetica Neue", Helvetica, Arial;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.6;
     word-wrap: break-word;
     -webkit-tap-highlight-color: transparent;
