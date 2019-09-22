@@ -1,15 +1,9 @@
 ---
 layout:     post
-title:      "1. 關聯式資料庫介紹"
-subtitle:   "CMU Database System Note"
-date:       2019-08-27
-author:     "Ryan"
-header-style: text
-catalog:    true
-tags:
-    - Open Course
-    - Database
-    - CMU
+title: 1. 關聯式資料庫介紹"    
+categories: [Open Course, Database, CMU]
+description: some word here
+keywords: 資料庫, Database, Open Course, CMU, SQL
 ---
 
 ## 1. 關聯式資料庫介紹
