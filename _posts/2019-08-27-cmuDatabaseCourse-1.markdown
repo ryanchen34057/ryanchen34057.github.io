@@ -1,7 +1,7 @@
 ---
 layout:     post
 title: 1. 關聯式資料庫介紹"    
-categories: [Open Course, Database, CMU]
+categories: [Database]
 description: some word here
 keywords: 資料庫, Database, Open Course, CMU, SQL
 ---

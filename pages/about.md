@@ -1,24 +1,19 @@
 ---
 layout: page
 title: About
-description: 打码改变世界
-keywords: Zhuang Ma, 马壮
+description: 
+keywords: Ryan Pan
 comments: true
-menu: 关于
+menu: About
 permalink: /about/
 ---
 
-我是马壮，码而生，码而立。
+我是Ryan
 
-仰慕「优雅编码的艺术」。
+## 聯絡方式
 
-坚信熟能生巧，努力改变人生。
-
-## 联系
-
-{% for website in site.data.social %}
-* {{ website.sitename }}：[@{{ website.name }}]({{ website.url }})
-{% endfor %}
+* GitHub: ryanchen34057
+* Line ID: ryanchen34057
 
 ## Skill Keywords
 
