@@ -1,15 +1,9 @@
 ---
 layout:     post
-title:      "6. 緩存池 Buffer Pools"
-subtitle:   "CMU Database System Note"
-date:       2019-08-28
-author:     "Ryan"
-header-style: text
-catalog:    true
-tags:
-    - Open Course
-    - Database
-    - CMU
+title: 6. 緩存池 Buffer Pools
+categories: [Database]
+description: some word here
+keywords: 資料庫, Database, Open Course, CMU, SQL
 ---
 DBMS是如何管理記憶體以及從硬碟裡搬移資料的?
 

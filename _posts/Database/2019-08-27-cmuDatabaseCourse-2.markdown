@@ -5,7 +5,7 @@ categories: [Database]
 description: some word here
 keywords: 資料庫, Database, Open Course, CMU, SQL
 ---
-# 1. 關聯式語言(SQL)介紹
+# 關聯式語言(SQL)介紹
 關聯式語言其實是由下列3種語言所組合而成的
 * Data Manipulation Language (DML)
 
@@ -17,7 +17,7 @@ keywords: 資料庫, Database, Open Course, CMU, SQL
 
     讓我們可以管理對資料庫的存取權。例如Grant、Revoke等存取權的控制。
     
-# 2. 資料型態(Data Type)
+# 資料型態(Data Type)
 首先，先來看一下關聯式資料庫裡都可以存些什麼資料型態吧!
 ## 整數(Integer)
 
@@ -118,7 +118,7 @@ INSERT INTO dttable (dt) VALUES ('2000-01-01 200:10:10'); /*WRONG: 時間格式�
 
 全世界分為許多不同時區(time zone)，所有時區都使用跟標準時間的差異來當作自己的標準時間。以台灣來說，你會在安裝Windows平台的電腦中，經由控制台裡的日期和時間，看到這個關於時區的設定。
 
-# 3. Data Definition Language(DDL)
+# Data Definition Language(DDL)
 DDL就是做跟表(Table)有關的命令集。
 
 ## 創建(CREATE)

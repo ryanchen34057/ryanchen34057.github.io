@@ -1,15 +1,9 @@
 ---
 layout:     post
-title:      "4. 資料庫儲存 I"
-subtitle:   "CMU Database System Note"
-date:       2019-08-28
-author:     "Ryan"
-header-style: text
-catalog:    true
-tags:
-    - Open Course
-    - Database
-    - CMU
+title: 4. 資料庫儲存 I    
+categories: [Database]
+description: some word here
+keywords: 資料庫, Database, Open Course, CMU, SQL
 ---
 [參考來源](https://www.youtube.com/watch?v=uuX4PQXBeos&list=PLSE8ODhjZXja3hgmuwhf89qboV1kOxMx7&index=3)
 

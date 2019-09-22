@@ -1,15 +1,9 @@
 ---
 layout:     post
-title:      "7. 雜湊表 Hash Table"
-subtitle:   "CMU Database System Note"
-date:       2019-08-28
-author:     "Ryan"
-header-style: text
-catalog:    true
-tags:
-    - Open Course
-    - Database
-    - CMU
+title: 7. 雜湊表 Hash Table
+categories: [Database]
+description: some word here
+keywords: 資料庫, Database, Open Course, CMU, SQL
 ---
 
 [參考來源](https://www.youtube.com/watch?v=ByG1IMM6Ua8&list=PLSE8ODhjZXja3hgmuwhf89qboV1kOxMx7&index=6)

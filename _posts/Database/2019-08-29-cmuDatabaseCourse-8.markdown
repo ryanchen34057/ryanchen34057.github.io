@@ -1,15 +1,9 @@
 ---
 layout:     post
-title:      "8. 樹索引 Tree Index"
-subtitle:   "CMU Database System Note"
-date:       2019-08-28
-author:     "Ryan"
-header-style: text
-catalog:    true
-tags:
-    - Open Course
-    - Database
-    - CMU
+title: 8. 樹索引 Tree Index
+categories: [Database]
+description: some word here
+keywords: 資料庫, Database, Open Course, CMU, SQL
 ---
 
 [參考來源](https://www.youtube.com/watch?v=Z1Qrsm7EfRw&list=PLSE8ODhjZXjYutVzTeAds8xUt1rcmyT7x&index=10)

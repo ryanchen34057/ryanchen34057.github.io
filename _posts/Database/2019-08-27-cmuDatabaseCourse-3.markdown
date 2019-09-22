@@ -1,15 +1,9 @@
 ---
 layout:     post
-title:      "3. 進階SQL語法"
-subtitle:   "CMU Database System Note"
-date:       2019-08-27
-author:     "Ryan"
-header-style: text
-catalog:    true
-tags:
-    - Open Course
-    - Database
-    - CMU
+title: 3. 進階SQL語法  
+categories: [Database]
+description: some word here
+keywords: 資料庫, Database, Open Course, CMU, SQL
 ---
 [參考](https://www.youtube.com/watch?v=80atcA6gBU8&list=PLSE8ODhjZXja3hgmuwhf89qboV1kOxMx7&index=2)
 
