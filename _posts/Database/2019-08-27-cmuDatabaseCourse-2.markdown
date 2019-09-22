@@ -1,15 +1,9 @@
 ---
 layout:     post
-title:      "2. 基本SQL語法"
-subtitle:   "CMU Database System Note"
-date:       2019-08-27
-author:     "Ryan"
-header-style: text
-catalog:    true
-tags:
-    - Open Course
-    - Database
-    - CMU
+title: 2. 關聯式語言(SQL)介紹"    
+categories: [Database]
+description: some word here
+keywords: 資料庫, Database, Open Course, CMU, SQL
 ---
 # 1. 關聯式語言(SQL)介紹
 關聯式語言其實是由下列3種語言所組合而成的
