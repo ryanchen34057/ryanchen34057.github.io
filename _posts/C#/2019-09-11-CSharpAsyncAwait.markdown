@@ -42,7 +42,7 @@ keywords: C#,Programming Language,異步執行,Aync, Await
 
 ### 程式碼
 
-```C#
+```csharp
 public partial class Form1 : Form
     {
         public Form1()
