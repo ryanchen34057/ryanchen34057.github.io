@@ -2,25 +2,25 @@
 #   Main Configs   #
 # ---------------- #
 baseurl:
-url: https://mazhuang.org
+url: https://ryanchen34057.github.io
 date_format: "ordinal"
-title: 码志
-subtitle: "打码改变人生"
-description: "马壮的个人博客"
-keywords: 码志, Zhuang Ma, mzlogin, mazhuang
-timezone: Asia/Shanghai
+title: 萊恩技術日誌
+subtitle: "菜鳥後端成長之路"
+description: "金魚腦，所以記筆記""
+keywords: 萊恩, 技術日誌, ryan, 後端工程師
+timezone: Asia/Taipei
 encoding: "utf-8"
 side_bar_repo_limit: 5
 
 # ---------------- #
 #      Author      #
 # ---------------- #
-author: Zhuang Ma
+author: Ryan Pan
 organization: 
 organization_url: 
-github_username: mzlogin
-location: Wuhan, China
-email: chumpma@gmail.com
+github_username: ryanchen34057
+location: Taipei, Taiwan
+email: ryanchen34057@gmail.com
 
 # ---------------- #
 #    Navigation    #
@@ -28,11 +28,11 @@ email: chumpma@gmail.com
 navs:
   -
     href: /
-    label: 首页
+    label: Home
 
   -
     href: /categories/
-    label: 分类
+    label: Categories
 
 #   -
 #     href: /archives/
@@ -40,15 +40,15 @@ navs:
 
   -
     href: /wiki/
-    label: 维基
+    label: Wiki
 
   -
     href: /links/
-    label: 链接
+    label: Links
 
   -
     href: /about/
-    label: 关于
+    label: About
 
 # ---------------- #
 #       RSS        #
