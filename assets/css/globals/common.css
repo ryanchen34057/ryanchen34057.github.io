@@ -1,9 +1,11 @@
+@import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
 .site-header,.site-header-actions .select-menu {
     position: relative
 }
 
 .markdown-body,body {
-    font-family: Arial,"Hiragino Sans GB","冬青黑","Microsoft YaHei","微软雅黑",SimSun,"宋体",Helvetica,Tahoma,Arial sans-serif;
+    /* font-family: Arial,"Hiragino Sans GB","冬青黑","Microsoft YaHei","微软雅黑",SimSun,"宋体",Helvetica,Tahoma,Arial sans-serif; */
+    font-family: 'Space Mono', monospace,"Helvetica Neue", Helvetica, Arial, 'Noto Sans TC';
     font-size: 16px;
     line-height: 1.6;
     word-wrap: break-word;
