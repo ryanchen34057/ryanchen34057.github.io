@@ -1,0 +1,77 @@
+---
+layout:     post
+title:      "用Java介紹Heap"
+subtitle:   ""
+date:       2019-09-01
+author:     "Ryan"
+header-style: text
+tags:
+    - Java
+    - 資料結構
+---
+
+## Heap是啥?
+`Heap`是一種資料結構，中文又稱「堆積」。
+
+而`Heap`又有兩種，**最小堆積(Minheap)**及**最大堆積(Maxheap)**。
+
+### 最小堆積 (Minheap)
+![](https://i.imgur.com/ivnVI0l.jpg)
+#### 特性
+每個父節點絕對比自己兩個子節點還要**小**，**如果破壞了這規則就不叫做最小堆積!**
+
+這邊要注意的是，整個heap裡面**根節點(Root)一定是最小的!**(很重要)
+
+#### Java實作原始碼
+```java
+public static void maxheapify(int[] arr, int root, int length) {
+    int maxNode;
+    int leftChild = 2 * root + 1;
+    int rightChild = 2 * root + 2;
+    if(leftChild < length && (arr[leftChild] >= arr[root])) {
+        maxNode = leftChild;
+    }
+    else {
+        maxNode = root;
+    }
+    if(rightChild < length && (arr[rightChild] >= arr[maxNode])) {
+        maxNode = rightChild;
+    }
+    if(maxNode != root) {
+        swap(arr, root, maxNode);
+        maxheapify(arr, maxNode, length);
+    }
+}
+```
+
+### 最大堆積 (Maxheap)
+![](https://i.imgur.com/ybtrFBq.jpg)
+#### 特性
+每個父節點絕對比自己兩個子節點還要**大**，**如果破壞了這規則就不叫做最大堆積!**
+
+這邊要注意的是，整個`heap`裡面**根節點(Root)一定是最大的!**(也很重要)
+
+#### Java實作原始碼
+```java
+public static void minheapify(int[] arr, int root, int length) {
+    int minNode;
+    int leftChild = 2 * root + 1;
+    int rightChild = 2 * root + 2;
+    if(leftChild < length && (arr[leftChild] <= arr[root])) {
+        minNode = leftChild;
+    }
+    else {
+        minNode = root;
+    }
+    if(rightChild < length && (arr[rightChild] <= arr[minNode])) {
+        minNode = rightChild;
+    }
+    if(minNode != root) {
+        swap(arr, root, minNode);
+        minheapify(arr, minNode, length);
+    }
+}
+```
+
+## Heap用途
+只要是需要有效率地找出最大或最小值都會用到`heap`，像是`Heap Sort`、`Priority Queue`等等。

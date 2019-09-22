@@ -1,0 +1,50 @@
+---
+layout:     post
+title:      "Java Stack實作原始碼"
+subtitle:   ""
+date:       2019-08-30
+author:     "Ryan"
+header-style: text
+tags:
+    - 資料結構
+    - Java
+---
+使用之前自己實作的LinkedList:
+```java
+public class Stack<T> {
+    private LinkedList<T> list;
+
+    public Stack() {
+        list = new LinkedList<>();
+    }
+
+    public Stack(T elem) {
+        this();
+
+    }
+
+    public int size() { return list.size(); }
+
+    public boolean isEmpty() { return list.isEmpty(); }
+
+    public void push(T elem) {
+        list.addFirst(elem);
+    }
+
+    public T pop() {
+        return list.removeFirst();
+    }
+
+    public T peek() {
+        return list.peekFirst();
+    }
+
+    public java.util.Iterator<T> iterator() {
+        return list.iterator();
+    }
+
+    public String toString() {
+        return list.toString();
+    }
+}
+```
