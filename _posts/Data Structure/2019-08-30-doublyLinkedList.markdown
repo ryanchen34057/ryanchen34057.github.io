@@ -1,13 +1,9 @@
 ---
 layout:     post
-title:      "Java LinkedList實作原始碼"
-subtitle:   ""
-date:       2019-08-30
-author:     "Ryan"
-header-style: text
-tags:
-    - 資料結構
-    - Java
+title: Java LinkedList實作 
+categories: [Data Structure]
+description: some word here
+keywords: Data Structure, Java, LinkedList
 ---
 ```java
 public class LinkedList<T> {

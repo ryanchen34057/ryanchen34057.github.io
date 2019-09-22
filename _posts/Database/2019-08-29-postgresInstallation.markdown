@@ -1,15 +1,9 @@
 ---
 layout:     post
-title:      "在Win10安裝PostgreSQL遇到安裝問題解決方法"
-subtitle:   安裝PostgreSQL遇到"problem running post-install step the database cluster initialization failed"
-date:       2019-08-29
-author:     "Ryan"
-header-style: text
-catalog:    true
-tags:
-    - Database
-    - Postgres
-    - Technical Solution
+title: 在Win10安裝PostgreSQL遇到安裝問題解決方法
+categories: [Database]
+description: some word here
+keywords: 資料庫, Database, Open Course, CMU, SQL
 ---
 
 # 問題

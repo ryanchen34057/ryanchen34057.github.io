@@ -1,14 +1,11 @@
 ---
 layout:     post
-title:      "C#的隱含型別(Implicit Typed) vs 顯式型別(Explicit Typed)"
-subtitle:   ""
-date:       2019-09-09
-author:     "Ryan"
-header-style: text
-tags:
-    - Coding Style
-    - C#
+title: C#的隱含型別(Implicit Typed) vs 顯式型別(Explicit Typed)   
+categories: [C#]
+description: some word here
+keywords: C#,Programming Language
 ---
+
 
 # 介紹
 ## 隱含型別(Implicit Typed)

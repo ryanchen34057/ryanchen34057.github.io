@@ -1,13 +1,9 @@
 ---
 layout:     post
-title:      "Java 8 Streams用法與範例"
-subtitle:   ""
-date:       2019-08-31
-author:     "Ryan"
-header-style: text
-tags:
-    - Java
-    - Functional Programming
+title: Java 8 Streams用法與範例
+categories: [Java]
+description: some word here
+keywords: Java, Functional Programming
 ---
 [參考來源](https://www.youtube.com/watch?v=t1-YZ6bF-g0)
 ## Streams是啥?

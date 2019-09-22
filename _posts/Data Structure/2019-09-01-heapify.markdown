@@ -1,15 +1,10 @@
 ---
 layout:     post
-title:      "用Java介紹Heap"
-subtitle:   ""
-date:       2019-09-01
-author:     "Ryan"
-header-style: text
-tags:
-    - Java
-    - 資料結構
+title: 用Java介紹Heap
+categories: [Data Structure]
+description: some word here
+keywords: Data Structure, Java, Heap, 堆積
 ---
-
 ## Heap是啥?
 `Heap`是一種資料結構，中文又稱「堆積」。
 
@@ -22,7 +17,7 @@ tags:
 
 這邊要注意的是，整個heap裡面**根節點(Root)一定是最小的!**(很重要)
 
-#### Java實作原始碼
+#### Java實作Heapify
 ```java
 public static void maxheapify(int[] arr, int root, int length) {
     int maxNode;

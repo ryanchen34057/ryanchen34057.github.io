@@ -1,13 +1,9 @@
 ---
 layout:     post
-title:      "用Java介紹Priority Queue"
-subtitle:   ""
-date:       2019-09-01
-author:     "Ryan"
-header-style: text
-tags:
-    - Java
-    - 資料結構
+title: 用Java介紹Priority Queue
+categories: [Data Structure]
+description: some word here
+keywords: Data Structure, Java, Heap, Priority Queue
 ---
 ## Priority Queue是啥?
 Priority Queue(好長，以下簡稱PQ)是一個抽象的資料型態(Abstract Data Type)。

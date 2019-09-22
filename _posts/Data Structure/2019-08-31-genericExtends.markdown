@@ -1,14 +1,10 @@
 ---
 layout:     post
-title:      "Java 泛型(Generic)裡的extends"
-subtitle:   ""
-date:       2019-08-31
-author:     "Ryan"
-header-style: text
-tags:
-    - Java
+title: Java 泛型(Generic)裡的extends
+categories: [Data Structure]
+description: some word here
+keywords: Data Structure, Java, Generic, 泛型
 ---
-
 在看別人的Source Code的時候看到了這個寫法:
 ```java
 public class Util {

@@ -1,13 +1,9 @@
 ---
 layout:     post
-title:      "Java Dynamic List實作原始碼"
-subtitle:   ""
-date:       2019-08-30
-author:     "Ryan"
-header-style: text
-tags:
-    - 資料結構
-    - Java
+title: Java Dynamic List實作
+categories: [Data Structure]
+description: some word here
+keywords: Data Structure, Java, Dynamic List
 ---
 ```java
 public class Array<T>{
