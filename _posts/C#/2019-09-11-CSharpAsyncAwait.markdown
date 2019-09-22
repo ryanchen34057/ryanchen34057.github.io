@@ -103,7 +103,7 @@ public partial class Form1 : Form
 接下來來看一下異步處理的程式碼吧!
 
 ## 異步處理程式碼
-```C#
+```csharp
 // 異步處理
     private async void Button_async_Click(object sender, EventArgs e)
     {

@@ -10,14 +10,14 @@ keywords: C#,Programming Language
 # 介紹
 ## 隱含型別(Implicit Typed)
 隱含型別使用`var`來宣告，在編譯時才會被指派明確的型別。
-```C#
+```csharp
 var grade = 90;
 var StreamReader = new StreamReader();
 ```
 
 ## 顯式型別(Explicit Typed)
 顯式型別則是在程式碼撰寫時就明確指派型別，範例如下:
-```C#
+```csharp
 int i = 1;
 int n = 2;
 ```
@@ -34,7 +34,7 @@ int n = 2;
 
 `var`還有一個優點就是假如方法內的區域變數要更改型別，就只要更改參數內的型別就好，假設有個方法這樣寫:
 
-```C#
+```csharp
 public IEnumerable GetStockOverPrice(IEnumerable<Stock> stocks, int priceOver)
 {
     IEnumerable<Stock> result = new IEnumerable<Stock>();
