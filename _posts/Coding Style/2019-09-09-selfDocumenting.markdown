@@ -1,12 +1,9 @@
 ---
 layout:     post
-title:      "Self-documenting Code vs Well-documented Code"
-subtitle:   ""
-date:       2019-09-09
-author:     "Ryan"
-header-style: text
-tags:
-    - Coding Style
+title: Self-documenting Code vs Well-documented Code
+categories: [Coding Style]
+description: some word here
+keywords: Coding Style, Clean Code
 ---
 
 ## 先來說說何謂Self-documented Code
