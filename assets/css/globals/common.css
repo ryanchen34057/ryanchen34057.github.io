@@ -1,4 +1,4 @@
-@import url(//cdn.jsdelivr.net/npm/taipei-sans-tc/dist/Bold/TaipeiSansTCBeta-Light.css);
+@import url(//cdn.jsdelivr.net/npm/taipei-sans-tc.css);
 .site-header,.site-header-actions .select-menu {
     position: relative
 }
