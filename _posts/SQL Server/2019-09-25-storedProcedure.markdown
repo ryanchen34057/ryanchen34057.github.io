@@ -95,6 +95,7 @@ CREATE ROLE dbStoredProcedureOnlyAccess
 ![](https://i.imgur.com/uBmD14D.png)
 
 2. 為了要讓新角色可以使用預存程序，我們要給予他使用`execute`的權限
+
 ```sql
 GRANT EXECUTE TO dbStoredProcedureOnlyAccess
 ```
@@ -118,4 +119,8 @@ GRANT EXECUTE TO dbStoredProcedureOnlyAccess
 
 這樣我們就創建好一個帳號只有使用預存程序的權限了!
 
->參考: https://www.youtube.com/watch?v=Sggdhot-MoM&list=PLLWMQd6PeGY0qGAge91kAaAo-YlFD_0dP&index=7
+
+
+參考:
+
+https://www.youtube.com/watch?v=Sggdhot-MoM&list=PLLWMQd6PeGY0qGAge91kAaAo-YlFD_0dP&index=7
