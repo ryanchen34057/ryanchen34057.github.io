@@ -84,7 +84,7 @@ END
 
 實際做法如下:
 
-1. 先創建一個新的角色， 打開一個新的查詢，輸入:
+先創建一個新的角色， 打開一個新的查詢，輸入:
 ```sql
 /*新增一個叫做dbStoredProcedureOnlyAccess的角色*/
 CREATE ROLE dbStoredProcedureOnlyAccess
@@ -94,25 +94,25 @@ CREATE ROLE dbStoredProcedureOnlyAccess
 
 ![](https://i.imgur.com/uBmD14D.png)
 
-2. 為了要讓新角色可以使用預存程序，我們要給予他使用`execute`的權限
+為了要讓新角色可以使用預存程序，我們要給予他使用`execute`的權限
 
 ```sql
 GRANT EXECUTE TO dbStoredProcedureOnlyAccess
 ```
 執行後該角色的使用者就可以開始使用預存程序了!
 
-3. 接下來創建一個新的登入帳號，讓該帳號的權限僅限於`dbStoredProcedureOnlyAccess`的權限
+接下來創建一個新的登入帳號，讓該帳號的權限僅限於`dbStoredProcedureOnlyAccess`的權限
 
 從伺服器下面的安全性 -> 登入按右鍵新增登入到達以下畫面
 
 ![](https://i.imgur.com/aAKodY6.png)
 
-4. 輸入登入名稱，選擇SQL Server驗證，輸入密碼。(這邊可以不勾選強制執行密碼原則，這樣密碼的設定就可以不受限制)
+輸入登入名稱，選擇SQL Server驗證，輸入密碼。(這邊可以不勾選強制執行密碼原則，這樣密碼的設定就可以不受限制)
 
 ![](https://i.imgur.com/VD2qCcE.png)
 
 
-5. 伺服器角色維持預設的public，使用者對應這邊選擇資料庫之後，在下面的角色成員資格對象只勾選`public`及`dbStoredProcedureOnlyAccess`
+伺服器角色維持預設的public，使用者對應這邊選擇資料庫之後，在下面的角色成員資格對象只勾選`public`及`dbStoredProcedureOnlyAccess`
 
 ![](https://i.imgur.com/Bl65GZy.png)
 
