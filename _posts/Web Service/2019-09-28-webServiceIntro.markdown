@@ -23,3 +23,19 @@ SOA可以比喻為插座，我把電力的供給做成一個插座(服務接口)
 
 而關於SOA的服務，常見的設計原則有:
 1. 必須是無狀態(Stateless)，也就是避免請求者必須依賴提供者狀態這種情況。
+> 延伸閱讀: [Stateful vs Stateless 兩者差異比較](https://ryanchen34057.github.io/2019/09/28/statefulAndStateless/)
+
+2. 一個服務一個功能
+3. 接口有明確的定義，例如`XML`或是現在比較主流的`JSON`格式
+
+因為SOA架構的實現概念不依賴於單一技術，所以可以被各種不同技術實現，而**Web Service**就是其中一種實現方式。
+
+## Web Service
+**Web Service**就是定義服務端如何向客戶端提供服務的方法。
+
+常見的方法有下列幾種:
+1. **RPC (Remote Procedure Call)** - 稱為遠程過程調用協議，為方法導向
+2. **SOAP (Simple Object Access Protocol)** - 稱為簡單對象訪問協議，為消息導向
+3. **REST (Representational State Transfer)** - 稱為表象化狀態轉變，為資源導向
+
+關於每種Web Service的介紹請期待下集XD
