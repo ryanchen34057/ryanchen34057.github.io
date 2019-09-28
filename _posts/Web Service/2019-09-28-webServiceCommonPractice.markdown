@@ -112,6 +112,12 @@ public class JavaServer {
 以上即為一個簡單的XML-RPC實作範例，XML-JSON的實作方式其實也差不多，只是傳送格式不同。
 有興趣的可以自己試試看!
 
+
+延伸閱讀:
+[淺談Web Service(一) - SOA(Service-Oriented Architecture)](https://ryanchen34057.github.io/2019/09/28/webServiceIntro/)
+
+
+
 > 參考來源:
 > 
 > https://zhuanlan.zhihu.com/p/28858632
