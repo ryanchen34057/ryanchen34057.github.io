@@ -1,10 +1,10 @@
-@import url(//cdn.jsdelivr.net/npm/taipei-sans-tc.css);
+@import url('https://fonts.googleapis.com/css?family=Noto+Serif+TC:500,600&display=swap&subset=chinese-traditional');
 .site-header,.site-header-actions .select-menu {
     position: relative
 }
 
 .markdown-body,body {
-    font-family: 'Taipei Sans TC', 'Space Mono', monospace,"Helvetica Neue", Helvetica, Arial;
+    font-family: 'Noto Serif TC', serif, 'Space Mono', monospace,"Helvetica Neue", Helvetica, Arial;
     font-size: 18px;
     line-height: 1.6;
     word-wrap: break-word;
