@@ -34,7 +34,7 @@ SOA可以比喻為插座，我把電力的供給做成一個插座(服務接口)
 **Web Service**就是定義服務端如何向客戶端提供服務的方法。
 
 常見的方法有下列幾種:
-1. **RPC (Remote Procedure Call)** - 稱為遠程過程調用協議，為方法導向
+1. **RPC (Remote Procedure Call)** - 稱為遠程方法調用協議，為方法導向
 2. **SOAP (Simple Object Access Protocol)** - 稱為簡單對象訪問協議，為消息導向
 3. **REST (Representational State Transfer)** - 稱為表象化狀態轉變，為資源導向
 
