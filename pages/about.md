@@ -15,7 +15,7 @@ permalink: /about/
 * GitHub: ryanchen34057
 * Line ID: ryanchen34057
 
-## Skill Keywords
+<!-- ## Skill Keywords
 
 {% for category in site.data.skills %}
 ### {{ category.name }}
@@ -24,4 +24,4 @@ permalink: /about/
 <button class="btn btn-outline" type="button">{{ keyword }}</button>
 {% endfor %}
 </div>
-{% endfor %}
+{% endfor %} -->
