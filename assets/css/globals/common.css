@@ -436,7 +436,7 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    background: gray;
+    background: #f7f7f7;
 }
 
 .markdown-body .emoji {
