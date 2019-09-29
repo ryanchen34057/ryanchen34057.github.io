@@ -431,6 +431,7 @@
 
 .markdown-body img {
     max-width: 75%;
+    max-height: 75%;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box
