@@ -240,7 +240,7 @@ interface IMyContract
 一個載體可以裝載複數個服務，每個服務也可以被不同的載體所裝載。
 
 #### 裝載途徑
-* IIS Hosting
+* *IIS Hosting*
   
     [IIS (Internet Information Service)](https://zh.wikipedia.org/wiki/%E7%B6%B2%E9%9A%9B%E7%B6%B2%E8%B7%AF%E8%B3%87%E8%A8%8A%E6%9C%8D%E5%8B%99)
 
@@ -248,13 +248,13 @@ interface IMyContract
     
     使用IIS來裝載必須在IIS底下提供一個虛擬路徑(像ASP.NET那樣)及一個`.svc`的檔案。IIS使用`.svc`檔來識別服務的程式碼。
 
-* Self-hosting 自裝載
+* *Self-hosting 自裝載*
   
   自裝載不同於IIS裝載，開發者必須自行處理Host Process的生命週期，通常會用*Windows Form 應用程式*或是*WPF應用程式*來當作載體，必須要啟動程式用服務才會啟用。
 
   不像IIS裝載只能使用HTTP，自裝載可以使用任何的WCF通訊協定。
 
-* WAS Hosting (Windows Activation Service)
+* *WAS Hosting (Windows Activation Service)*
   
   WAS裝載方式起初是用來取代IIS裝載的。因為IIS是網路伺服器而不是裝載引擎，所以必須將服務包裝成一個網頁。這樣做會增加許多內部的複雜性。所以在新一代的*Windows*來臨同時，微軟就推出了*WAS*。
 

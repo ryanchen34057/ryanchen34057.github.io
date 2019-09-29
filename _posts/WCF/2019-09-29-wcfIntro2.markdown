@@ -1,0 +1,424 @@
+---
+layout: post
+title: WCF (Windows Communication Foundation) 詳細介紹(二) - 什麼是WCF?(中)
+categories: [WCF]
+description: 什麼是WCF?
+keywords: WCF, Windows, Windows Communication Foundation, WCF是什麼
+---
+
+還沒看過上篇的: [WCF (Windows Communication Foundation) 詳細介紹(一) - 什麼是WCF?(上)](https://ryanchen34057.github.io/2019/09/29/wcfIntro/)
+
+### Bindings 綁定
+訊息有許多不同的傳遞方式，而不同的傳遞方式就必須使用相對應的通訊協定，像是*HTTP*、*HTTPS*、*TCP*、*IPC*、*MSMQ*等等。我們也有許多訊息編碼方式可以選擇，像是可以選擇字串來提供系統間的互操作性或是二進制編碼來提高效能，及其他還有加密方式可以選擇等等。
+
+而WCF讓這些選擇變得更簡單且更好管理。WCF將不同的通訊方式整理成一組組的*Binding*(綁定)。Binding裡面包含了通訊協定、訊息編碼、溝通模式、可靠性、安全性及互操作性等等的設定，我們需要做的就只是決定好目標使用情境來決定用使用哪個Binding。
+
+在`config`裡選擇好Binding後，服務會將其發佈在Metadata中，用戶端必須使用一樣的Binding才可以進行溝通。一個服務可以在不同的位置(Address)上支援不同的Binding。
+
+#### 常見的Binding
+1. *Basic Binding* - `BasicHttpBinding`
+   
+   Basic Binding在設計上將服務包裝成舊版的[ASMX Web Service](https://docs.microsoft.com/zh-tw/xamarin/xamarin-forms/data-cloud/web-services/asmx)，讓新的WCF用戶端也能夠使用舊的ASMX服務。
+
+2. *TCP Binding* - `NetTcpBinding`
+   
+   TCP Binding使用TCP協定來做內網內(Intranet)跨機器的溝通。用戶端及服務端都必須使用WCF。
+
+3. *IPC Binding* - `NetNamedPipeBinding`
+
+    IPC Binding使用命名管道(Named Pipe)來做同機器內的訊息傳輸，因為是同機器，這也是最為穩定的傳輸方式，比TCP更為輕量。
+
+4. *Web Service(WS) Binding* - `WSHttpBinding`
+   
+    WS Binding使用`http`或是`https`來做傳輸，提供網際網路中多樣化的功能。此Binding能夠跟任何支援WS協定的機器做溝通。
+
+5. *MSMQ* Binding - `NetMsmqBinding`
+   
+   MSMQ Binding使用`MSMQ`來傳輸及支援佇列的呼叫。
+
+#### Format And Encoding 格式及編碼
+每種Binding都會使用不一樣的通訊方式及編碼。
+
+![](https://i.imgur.com/LDTX7ZK.png)
+
+>註: `BasicHttpBinding`及`WsHttpBinding`能夠同時支援Text及[MTOM](https://en.wikipedia.org/wiki/Message_Transmission_Optimization_Mechanism)的編碼。
+
+#### 該如何選擇Binding?
+書中一樣有一個很好的決策圖可以來參考。
+
+![](https://i.imgur.com/WuBCuAQ.png)
+
+### Endpoints 端點
+這邊來整理一下到目前為止的內容:
+
+每個服務都會有:
+
+1. *位置 **A**ddress* - 一個獨特的位置(Address)來定義服務在哪裡
+
+2. *綁定 **B**inding* - 一個綁定(Binding)來定義要如何跟其他服務做溝通
+   
+3. *契約 **C**ontract* - 一個契約(Contract)來描述服務的內容
+
+這三個要素也就構成了一個服務的端點(Endpoint)，可以記為服務的*ABC*。
+每個服務都必須暴露出一個端點，每個端點必須要有一個也只能有一個契約。每個端點上的服務都有一個獨特的位置，一個服務可以暴露出多個端點。這些端點可以使用不一樣的Binding也可以使用不一樣的契約。
+
+#### 端點設定範例
+
+`App.config`
+```xml
+<system.serviceModel>
+    <services>
+        <service name = "MyNamespace.MyService">
+            <endpoint
+                address = "http://localhost:8000/MyService"
+                binding = "wsHttpBinding"
+                contract = "MyNamespace.IMyContract"
+            />
+        </service>
+    </services>
+</system.serviceModel>
+```
+
+####  一個服務可以有不同的端點
+```xml
+<service name = "MyService">
+    <endpoint
+        address = "http://localhost:8000/MyService"
+        binding = "wsHttpBinding"
+        contract = "IMyContract"
+    />
+    <endpoint
+        address = "net.tcp://localhost:8001/MyService"
+        binding = "netTcpBinding"
+        contract = "IMyContract"
+    />
+    <endpoint
+        address = "net.tcp://localhost:8002/MyService"
+        binding = "netTcpBinding"
+        contract = "IMyOtherContract"
+    />
+</service>
+```
+
+#### 使用`Base Address`
+
+可以讓不同端點共用一個Base Address
+
+```xml
+<service name = "MyService">
+    <host>
+        <baseAddresses>
+            <add baseAddress="net.tcp://localhost:8002/" />
+        </baseAddresses>
+    </host>
+    <endpoint
+        address = "MyService1"
+        binding = "wsHttpBinding"
+        contract = "IMyContract"
+    />
+    <endpoint
+        address = "MyService2"
+        binding = "netTcpBinding"
+        contract = "IMyContract"
+    />
+    <endpoint
+        address = "MyService3"
+        binding = "netTcpBinding"
+        contract = "IMyOtherContract"
+    />
+</service>
+```
+
+#### Binding 設定 
+我們可以在`App.config`檔來對端點使用的Binding進行進一步的設定。
+
+範例:
+
+```xml
+<system.serviceModel>
+    <services>
+        <service name = "MyService">
+            <endpoint
+                address = "net.tcp://localhost:8000/MyService"
+                bindingConfiguration = "TransactionalTCP"
+                binding = "netTcpBinding"
+                contract = "IMyContract"
+            />
+            <endpoint
+                address = "net.tcp://localhost:8001/MyService"
+                bindingConfiguration = "TransactionalTCP"
+                binding = "netTcpBinding"
+                contract = "IMyOtherContract"
+            />
+        </service>
+    </services>
+    <bindings>
+        <netTcpBinding>
+            <binding 
+                name = "TransactionalTCP"
+                transactionFlow = "true"
+            />
+        </netTcpBinding>
+    </bindings>
+</system.serviceModel>
+```
+
+#### 預設Binding
+我們也可以使用*Default Binding*來統一對所有`App.config`裡的端點進行設定。
+
+範例:
+
+```xml
+<system.serviceModel>
+    <services>
+        <service name = "MyService">
+            <endpoint
+                address = "net.tcp://localhost:8000/MyService"
+                binding = "netTcpBinding"
+                contract = "IMyContract"
+            />
+            <endpoint
+                address = "net.tcp://localhost:8001/MyService"
+                binding = "netTcpBinding"
+                contract = "IMyOtherContract"
+            />
+        </service>
+    </services>
+    <bindings>
+        <netTcpBinding>
+            <binding
+                transactionFlow = "true"
+            />
+        </netTcpBinding>
+    </bindings>
+</system.serviceModel>
+```
+
+#### 利用程式進行設定
+
+範例:
+
+```csharp
+ServiceHost host = new ServiceHost(typeof(MyService));
+Binding wsBinding = new WSHttpBinding();
+Binding tcpBinding = new NetTcpBinding();
+
+host.AddServiceEndpoint(typeof(IMyContract),wsBinding,
+"http://localhost:8000/MyService");
+host.AddServiceEndpoint(typeof(IMyContract),tcpBinding,
+"net.tcp://localhost:8001/MyService");
+host.AddServiceEndpoint(typeof(IMyOtherContract),tcpBinding,
+"net.tcp://localhost:8002/MyService");
+host.Open();
+```
+
+或是只用`Base Address`來當作端點的位置
+```csharp
+Uri tcpBaseAddress = new Uri("net.tcp://localhost:8000/");
+ServiceHost host = new ServiceHost(typeof(MyService),tcpBaseAddress);
+Binding tcpBinding = new NetTcpBinding();
+
+//Use base address as address
+host.AddServiceEndpoint(typeof(IMyContract),tcpBinding,"");
+//Add relative address
+host.AddServiceEndpoint(typeof(IMyContract),tcpBinding,"MyService");
+//Ignore base address
+host.AddServiceEndpoint(typeof(IMyContract),tcpBinding,
+"net.tcp://localhost:8001/MyService");
+host.Open();
+```
+#### 用程式設定Binding (Binding Configuration)
+```csharp
+ServiceHost host = new ServiceHost(typeof(MyService));
+NetTcpBinding tcpBinding = new NetTcpBinding();
+tcpBinding.TransactionFlow = true;
+
+host.AddServiceEndpoint(typeof(IMyContract),tcpBinding,
+"net.tcp://localhost:8000/MyService");
+host.Open();
+```
+
+
+
+由以上範例可以發現每個端點(Endpoint)的Tag裡不用指定`BindingConfiguration`，預設的Binding會對沒有明確指定`BindingConfiguration`的端點進行設定。每個Binding的類型都只能有一個預設Binding。
+
+#### 預設端點 Default Endpoints
+
+如果服務沒有設定任何的端點(沒有在`config`裡或是程式裡)，但是至少有一個Base Address，WCF會自動新增一個端點給服務，稱作*預設端點 (Default Endpoint)*。每個Base Address及契約會新增一個端點，預設會將Base Address作為預設端點的位置。
+
+以這個服務為例:
+```csharp
+[ServiceContract]
+interface IMyContract
+{...}
+[ServiceContract]
+interface IMyOtherContract
+{...}
+class MyService : IMyContract,IMyOtherContract
+{...}
+```
+
+裝載程式:
+```csharp
+Uri httpBaseAddress = new Uri("http://localhost:8000/");
+Uri tcpBaseAddress = new Uri("net.tcp://localhost:9000/");
+Uri ipcBaseAddress = new Uri("net.pipe://localhost/");
+
+ServiceHost host = new ServiceHost(typeof(MyService),httpBaseAddress,
+tcpBaseAddress,ipcBaseAddress);
+host.Open();
+```
+
+假設沒有在`App.config`或是其他設定檔裡加入任何端點，WCF會自動加入以下端點:
+```xml
+<service name = "MyService">
+    <endpoint name = "BasicHttpBinding_IMyContract"
+        address = "http://localhost:8000/"
+        binding = "basicHttpBinding"
+        contract = "IMyContract"
+    />
+    <endpoint name = "NetTcpBinding_IMyContract"
+        address = "net.tcp://localhost:9000"
+        binding = "netTcpBinding"
+        contract = "IMyContract"
+    />
+    <endpoint name = "NetNamedPipeBinding_IMyContract"
+        address = "net.pipe://localhost/"
+        binding = "netNamedPipeBinding"
+        contract = "IMyContract"
+    />
+    <endpoint name = "BasicHttpBinding_IMyOtherContract"
+        address = "http://localhost:8000/"
+        binding = "basicHttpBinding"
+        contract = "IMyOtherContract"
+    />
+    <endpoint name = "NetTcpBinding_IMyOtherContract"
+        address = "net.tcp://localhost:9000"
+        binding = "netTcpBinding"
+        contract = "IMyOtherContract"
+    />
+    <endpoint name = "NetNamedPipeBinding_IMyOtherContract"
+        address = "net.pipe://localhost/"
+        binding = "netNamedPipeBinding"
+        contract = "IMyOtherContract"
+    />
+</service>
+```
+
+可以發現WCF會給不同的端點一樣的位置，這樣在發佈Metadata時會出錯，所以我們可以用`ServiceHost`的`AddDefaultEndpoints()`方法來設定預設端點，例如:
+
+```csharp
+public class ServiceHost : ...
+{
+    public void AddDefaultEndpoints();
+    //More members
+}
+```
+
+### Metadata交換 Metadata Exchange
+
+服務預設是不會發佈自己的Metadata的，要發佈的話有兩個選項:
+
+1. 用`HTTP-GET`
+2. 通過*MEX端點 (MEX Endpoint)*
+
+#### 通過HTTP-GET來發佈Metadata
+
+我們可以透過加入*服務行為(Service Behavior)*的方式來讓服務自動提供Metadata，我們必須在`App.config`來設定這個服務行為:
+
+```xml
+<system.serviceModel>
+    <services>
+        <service name = "MyService" behaviorConfiguration = "MEXGET">
+            <host>
+                <baseAddresses>
+                    <add baseAddress = "http://localhost:8000/"/>
+                </baseAddresses>
+            </host>
+        ...
+        </service>
+        <service name = "MyOtherService" behaviorConfiguration = "MEXGET">
+            <host>
+                <baseAddresses>
+                    <add baseAddress = "http://localhost:8001/"/>
+                </baseAddresses>
+            </host>
+        ...
+        </service>
+    </services>
+    <behaviors>
+        <serviceBehaviors>
+            <behavior name = "MEXGET">
+                <serviceMetadata httpGetEnabled = "true"/>
+            </behavior>
+        </serviceBehaviors>
+    </behaviors>
+</system.serviceModel>
+```
+
+要注意的是裝載程式的`Base Address`必須要是`HTTP`的位置，如果不是的話啟用服務的時候就會出錯。
+
+當做好以上的設定後，可以用瀏覽器輸入輸入設定好的`Base Address`，如果出現下面的頁面就代表服務裝載成功了!
+
+![](https://i.imgur.com/k3hw3Ar.png)
+
+#### 通過端點來發佈Metadata
+因為用`HTTP-GET`來發佈Metadata是WCF的一個功能，所以其他平台可能無法支援。
+
+另外一個比較常見的做法為用一個特別的端點來發佈Metadata，稱作*Metadata Exchange Endpoint*。
+
+加入MEX端點的範例:
+```xml
+<services>
+    <service name = "MyService" behaviorConfiguration = "MEX">
+        <host>
+            <baseAddresses>
+                <add baseAddress = "net.tcp://localhost:8001/"/>
+                <add baseAddress = "net.pipe://localhost/"/>
+            </baseAddresses>
+        </host>
+        <endpoint
+            address = "MEX"
+            binding = "mexTcpBinding"
+            contract = "IMetadataExchange"
+        />
+        <endpoint
+            address = "MEX"
+            binding = "mexNamedPipeBinding"
+            contract = "IMetadataExchange"
+        />
+        <endpoint
+            address = "http://localhost:8000/MEX"
+            binding = "mexHttpBinding"
+            contract = "IMetadataExchange"
+        />
+    </service>
+</services>
+<behaviors>
+    <serviceBehaviors>
+        <behavior name = "MEX">
+            <serviceMetadata/>
+        </behavior>
+    </serviceBehaviors>
+</behaviors>
+```
+
+另外還有用程式加入MEX端點的方法:
+```csharp
+Uri tcpBaseAddress = new Uri("net.tcp://localhost:9000/");
+ServiceHost host = new ServiceHost(typeof(MyService),tcpBaseAddress);
+ServiceMetadataBehavior metadataBehavior;
+metadataBehavior = host.Description.Behaviors.Find<ServiceMetadataBehavior>();
+if(metadataBehavior == null)
+{
+    metadataBehavior = new ServiceMetadataBehavior();
+    host.Description.Behaviors.Add(metadataBehavior);
+}
+Binding binding = MetadataExchangeBindings.CreateMexTcpBinding();
+host.AddServiceEndpoint(typeof(IMetadataExchange),binding,"MEX");
+host.Open();
+```
+
+> 延伸閱讀: 
+> 
+> [WCF (Windows Communication Foundation) 詳細介紹(一) - 什麼是WCF?(上)](https://ryanchen34057.github.io/2019/09/29/wcfIntro/)
