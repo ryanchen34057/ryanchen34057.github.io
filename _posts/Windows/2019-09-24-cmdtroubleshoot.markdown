@@ -16,7 +16,7 @@ Windows -> 搜尋「環境變數」 -> 選擇系統變數 -> Path -> 新增
 
 -> 輸入變數值: 『%SystemRoot%\system32』
 
-![](https://i.imgur.com/asoDbOW.png=100x20)
+![](https://i.imgur.com/asoDbOW.png)
 
 
 新增變數之後就可以用`net`囉!
