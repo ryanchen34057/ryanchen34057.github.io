@@ -1,0 +1,271 @@
+---
+layout: post
+title: WCF (Windows Communication Foundation) 詳細介紹(一) - 什麼是WCF?(上)
+categories: [WCF]
+description: 什麼是WCF?
+keywords: WCF, Windows, Windows Communication Foundation, WCF是什麼
+---
+
+## 前言
+因為最近在公司的培訓有接觸到WCF，所以想把唸書的過程給筆記起來，之後忘了可以回來複習。
+主要參考來源為[Programming WCF Services, 4th Edition](http://shop.oreilly.com/product/0636920032373.do)這本書，總共1000多頁，基本上把關於WCF的相關原理及機制都濃縮在裡面了，有興趣的朋友可以直接讀讀看。
+
+## WCF基礎
+
+### 什麼是WCF (Windows Communication Foundation)?
+
+WCF是一種開發工具，用來在微軟系統上開發(Develop)及部屬(Deploy)服務(Service)。
+
+WCF可以被視為一個更好的.NET，讓你可以提供CLR(Common Language Runtime)(註1)的服務，或是使用其他CLR的服務。
+> *註1: [CLR(Common Language Runtime)](https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E8%AA%9E%E8%A8%80%E9%81%8B%E8%A1%8C%E5%BA%AB): 為微軟.NET框架提供的程式碼執行環境。
+
+雖然服務不是只能用WCF來寫，但是使用WCF撰寫起來較為容易。因為微軟直接把開發服務該要遵守的一些規範、轉型、數據打包及管理各式各樣通訊協定的功能都包裝在WCF裡了，並且提供服務間的[互操作性(Interoperability)](https://zh.wikipedia.org/wiki/%E4%BA%92%E6%93%8D%E4%BD%9C%E6%80%A7)。
+也因為如此，WCF大大提升了開發者在開發服務上的產能。
+
+WCF目前包裝在.NET 4.5版本裡，所以只有Windows XP之後的作業系統能夠支援。
+
+大部分的WCF功能都包含在一個叫做`System.ServiceModel.dll`裡，開發時必須將其加入參考才能使用WCF的功能。
+
+### 什麼是服務 (Service)?
+剛剛一直有提到『服務』兩個字，那什麼是服務呢?
+
+服務是提供給外界使用的一個功能。例如我寫好一隻線上版的小算盤，可以藉由使用者的輸入來提供加減乘除的功能，這些功能就可以說是我提供的服務。
+
+像是物件導向的應用程式(Object-oriented Application)是由物件堆積而成一樣，服務導向的應用程式(Service-oriented Application)就是由一個一個服務所組成的。
+ 
+![](https://i.imgur.com/W6WWeC1.png)
+
+**用戶端 Client Side**: 使用服務的人
+
+**伺服器端 Server Side**: 提供服務的人
+
+用戶端及伺服器端之間的溝通可以是直接性的，也可以透過像是Azure Service Bus(註1)的媒介來進行。
+
+WCF的訊息都是基於SOAP，且並不依賴於單一的通訊協定。不像Web Service，WCF的服務可以使用HTTP以外的通訊協定。(例如TCP)
+
+因為服務對外界並不透明，每個WCF服務基本上會暴露**Metadata**來說明關於服務的功能以及與服務溝通的方法。**Metadata**通常以標準化的[Web Services Description Language(WSDL)](https://zh.wikipedia.org/wiki/WSDL)的語言來發佈。
+
+### 用戶端如何使用服務?
+在WCF裡，用戶端幾乎不會直接去跟服務溝通，而是透過代理伺服器(Proxy)來呼叫服務，就算是在本地端也不例外。
+
+用戶端可以在任何情境下與服務溝通。如果在同一台機器上，用戶端可以在同一個Domain裡使用服務。而跨機器的情境下，用戶端可以在所在的區網(Intranet)或是在Internet上與服務進行溝通。
+
+### 位置 Address
+在WCF裡，每個服務都有一個唯一的位置。提供了兩個重要的資訊:
+
+1. 服務所在的位置 - 提供網址或是[URI(Uniform Resource Identifier)](https://zh.wikipedia.org/wiki/%E7%BB%9F%E4%B8%80%E8%B5%84%E6%BA%90%E6%A0%87%E5%BF%97%E7%AC%A6)，URI可以是任何唯一的字串，像是服務名稱或是[全球唯一識別碼 GUID(Globally Unique Identifier)](https://zh.wikipedia.org/wiki/%E5%85%A8%E5%B1%80%E5%94%AF%E4%B8%80%E6%A0%87%E8%AF%86%E7%AC%A6)
+2. 通訊協定 - WCF提供了以下通訊協定:
+
+* HTTP/HTTPS
+* TCP
+* IPC
+* MSMQ
+* Service Bus
+* WebSocket
+* UDP etc...
+
+#### 位置格式
+```
+[base address] / [optional URI]
+```
+**Base Address格式**
+```
+[transport]://[machine or domain][:optional port]
+```
+以下為幾個位置的範例:
+```
+http://localhost:8001 - 使用HTTP協定，到叫做"localhost"的機器中的8001端口 
+http://localhost:8001/MyService - 使用HTTP協定，在叫做"localhost"的機器中的8001端口有一個叫做MyService的服務在等我的呼叫 
+net.tcp://localhost:8002/MyService
+net.pipe://localhost/MyPipe
+net.msmq://localhost/private/MyQueue
+net.msmq://localhost/MyQueue
+ws://localhost/MyService
+soap.udp://localhost:8081/MyService
+```
+
+### TCP位置
+TCP使用`net.tcp`，預設端口為`808`(如果沒有提供)。
+不同的服務是可以分享同一個TCP位置的端口的。
+
+範例:
+```tcp
+net.tcp://localhost:8002/MyService
+net.tcp://localhost:8002/MyOtherService
+```
+### HTTP位置
+HTTP使用`http`來傳遞訊息，或是`https`來提高傳輸的安全性。預設端口為`80`(HTTP)或是`443`(HTTPS)。通常會使用在面向外界(Outward-facing)以Internet為基礎的服務上。
+
+範例:
+```
+http://localhost:8001
+```
+
+### IPC位置
+IPC使用`net.pipe`來傳輸，表示使用[Windows的命名管道(Windows Named Pipe)](https://zh.wikipedia.org/wiki/%E5%91%BD%E5%90%8D%E7%AE%A1%E9%81%93)。
+
+使用IPC的服務只能接收同一台機器內的呼叫，所以機器名稱只能是`localhost`。並且一台機器只限於打開一個命名管道。
+
+範例:
+```
+net.pipe://localhost/MyPipe
+```
+
+### MSMQ位置
+MSMQ使用`net.msmq`來傳輸，表示使用[微軟訊息佇列 Microsoft
+Message Queue](https://zh.wikipedia.org/wiki/Microsoft_Message_Queuing)，使用時必須指定佇列的名稱。
+
+範例:
+```
+net.msmq://localhost/private/MyService - private的佇列
+net.msmq://localhost/MyService
+```
+
+### WebSocket Address
+WebSocket的位置比較特別一些，用戶端使用`ws`來傳輸，及`wss`做較安全的傳輸。而服務端使用`http`(for ws)及`https`(for wss)。
+
+如果你需要`callback`(回覆)的話就必須要指定WebSocket的位置，例如:
+```
+ws://localhost:8080
+```
+### 契約 Contracts
+每個WCF的服務都會有契約。契約是一種描述服務是在做什麼的一種標準化的規範方式。契約總共有四種形式:
+**1. Service Contracts 服務契約**
+
+    說明服務提供了哪些方法給用戶端使用。
+**2. Data Contracts 資料契約**
+
+    定義出服務使用的資料型態。可以是基本資料型態像是`int`或是`string`，也可以是自定義的型別。
+**3. Fault Contracts 錯誤契約**
+
+    定義如果服務出現例外狀況要如何傳送資訊給用戶端。
+**4. Message Contracts 訊息契約**
+
+    讓服務端可以直接跟訊息溝通，不是WCF常見的作法，在這邊不贅述。
+
+#### 服務契約 Service Contracts
+服務契約範例:
+```csharp
+//服務契約的介面
+[ServiceContract]
+interface IMyContract
+{
+    [OperationContract]
+    string MyMethod(string text);
+    
+    // 沒有指定[OperationContract]標誌的就不會被包含在服務列表裡
+    string MyOtherMethod(string text);
+}
+
+// 服務實作
+class MyService : IMyContract
+{
+    public string MyMethod(string text)
+    {
+        return "Hello " + text;
+    }
+    public string MyOtherMethod(string text)
+    {
+        return "Cannot call this method over WCF";
+    }
+}
+```
+如上面範例，每個服務契約必須要有一個標明為`[ServiceContract]`的介面，介面裡有所有這個服務提供的方法，唯有標明`OperationContract`的方法才能夠被用戶端訪問。
+
+一個類別也可以實作兩種不同的介面)(服務)，例如:
+```csharp
+[ServiceContract]
+interface IMyContract
+{
+    [OperationContract]
+    string MyMethod();
+}
+
+[ServiceContract]
+interface IMyOtherContract
+{
+    [OperationContract]
+    void MyOtherMethod();
+}
+
+class MyService : IMyContract,IMyOtherContract
+{
+    public string MyMethod()
+    {...}
+    public void MyOtherMethod()
+    {...}
+}
+```
+#### 注意點
+* 實作服務的類別不允許使用有待參數的建構子，因為WCF只會使用預設的建構子。
+* 雖然類別可以使用索引子(indexer)或是靜態成員(static member)等內部屬性，但是WCF的用戶端是無法使用到這些屬性的。
+* 還有盡量不要在實作服務的類別上直接使用`[ServiceContract]`，拆開來才可以讓不同類別實作同一個服務契約，增加擴充性。
+
+#### 名稱及命名空間 Names And Namespaces
+我們可以為契約定義一個命名空間，使用`Namespace`的屬性，例如:
+```csharp
+[ServiceContract(Namespace = "MyNamespace")]
+interface IMyContract
+{...}
+```
+如果沒有給予命名空間的話預設會是 http://tempuri.org。如果是面向大眾的服務也可以使用公司的URL或是應用程式名稱。
+
+名稱的預設會是介面的名稱，不過也可以用`Name`屬性來定義另外一個名稱，這名稱將會顯示在`Metadata`中,
+例如:
+```csharp
+[ServiceContract(Name = "IMyContract")]
+interface IMyOtherContract
+{...}
+
+[ServiceContract]
+interface IMyContract
+{
+    [OperationContract(Name = "SomeOperation")]
+    void MyMethod(string text);
+}
+```
+
+### Hosting 裝載
+每個WCF的服務都必須有一個載體，叫做*Host Process*。
+
+一個載體可以裝載複數個服務，每個服務也可以被不同的載體所裝載。
+
+#### 裝載途徑
+* IIS Hosting
+  
+    [IIS (Internet Information Service)](https://zh.wikipedia.org/wiki/%E7%B6%B2%E9%9A%9B%E7%B6%B2%E8%B7%AF%E8%B3%87%E8%A8%8A%E6%9C%8D%E5%8B%99)
+
+    用IIS來裝載的好處在於當地一個用戶端發出請求之後Host Process就會自動啟用，整個生命周期是由Host Process來管理的。但是壞處就是你只能夠使用`http`。
+    
+    使用IIS來裝載必須在IIS底下提供一個虛擬路徑(像ASP.NET那樣)及一個`.svc`的檔案。IIS使用`.svc`檔來識別服務的程式碼。
+
+* Self-hosting 自裝載
+  
+  自裝載不同於IIS裝載，開發者必須自行處理Host Process的生命週期，通常會用*Windows Form 應用程式*或是*WPF應用程式*來當作載體，必須要啟動程式用服務才會啟用。
+
+  不像IIS裝載只能使用HTTP，自裝載可以使用任何的WCF通訊協定。
+
+* WAS Hosting (Windows Activation Service)
+  
+  WAS裝載方式起初是用來取代IIS裝載的。因為IIS是網路伺服器而不是裝載引擎，所以必須將服務包裝成一個網頁。這樣做會增加許多內部的複雜性。所以在新一代的*Windows*來臨同時，微軟就推出了*WAS*。
+
+  WAS不僅可以裝載網頁，也可以輕易地裝載服務，能夠使用任何通訊協定。
+
+  WAS在使用上很像IIS，需要提供一個`.svc`檔案或是在`config`檔案提供一些資訊。因為WAS是系統服務，所以跟IIS一樣，接收到第一個用戶端的請求之後WAS就會啟用Host Process，然後處理請求。
+
+  WAS提供許多自裝載所無法做到的功能，像是*Application Pooling*、*Recycling*、*Idle time management*、*Identity management*及*Isolation*等等。不過WAS在使用上還是有需要指定支援的平台的缺點。(像是指定Windows Server 2008之後的系統才有支援)
+
+#### 該如何選擇適合自己的裝載方式?
+如果使用情境是面向網際網路，那可以選擇IIS或是WAS來達到資料安全傳輸的目的，如果是其他情境的話可以選擇自裝載。自裝載的優點在於能夠輕鬆地管理及監控內網間的服務狀況。*Programming WCF Services, 4th Edition*書中提供了一個很好用的[二元決策圖](https://zh.wikipedia.org/zh-tw/%E4%BA%8C%E5%85%83%E5%86%B3%E7%AD%96%E5%9B%BE)。
+
+![](https://i.imgur.com/t8tDzxn.png)
+
+
+
+> *註1: [Azure Service Bus](https://azure.microsoft.com/zh-tw/services/service-bus/): 微軟為解決伺服器及用戶間複雜的訊息傳輸問題所開發的企業整合訊息代理程式。
+
+> 延伸閱讀: 
+> 
+> [淺談Web Service(一) - SOA(Service-Oriented Architecture)](https://ryanchen34057.github.io/2019/09/28/webServiceIntro/)
+> 
+> [淺談Web Service(三) - SOAP 簡單物件存取協議](https://ryanchen34057.github.io/2019/09/28/webServiceSOAP/)
