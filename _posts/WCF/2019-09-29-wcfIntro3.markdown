@@ -113,3 +113,11 @@ SvcUtil net.pipe://localhost/MyPipe/MEX /out:Proxy.cs
     </bindings>
 </system.serviceModel>
 ```
+
+> 延伸閱讀:
+> 
+> [WCF (Windows Communication Foundation) 詳細介紹(一) - 什麼是WCF?(上)](https://ryanchen34057.github.io/2019/09/29/wcfIntro1/)
+> 
+> [WCF (Windows Communication Foundation) 詳細介紹(二) - 什麼是WCF?(中)](https://ryanchen34057.github.io/2019/09/29/wcfIntro2/)
+
+
