@@ -1,0 +1,115 @@
+---
+layout: post
+title: WCF (Windows Communication Foundation) 詳細介紹(三) - 什麼是WCF?(下)
+categories: [WCF]
+description: 什麼是WCF?
+keywords: WCF, Windows, Windows Communication Foundation, WCF是什麼
+---
+
+還沒看過上篇的: 
+
+[WCF (Windows Communication Foundation) 詳細介紹(一) - 什麼是WCF?(上)](https://ryanchen34057.github.io/2019/09/29/wcfIntro1/)
+
+[WCF (Windows Communication Foundation) 詳細介紹(二) - 什麼是WCF?(中)](https://ryanchen34057.github.io/2019/09/29/wcfIntro2/)
+
+### 用戶端 Client-Side
+上次我們提到用戶端必須透過代理(Proxy)來訪問服務端的服務，而產生代理方式也有很多種，這邊就來一一介紹吧!
+
+#### 用*加入服務參考*產生代理
+
+我們可以透過Visual Studio來幫我們產生代理。這個需要匯入服務的Metadata才可以使用，步驟如下:
+
+1. 先啟動你的裝載程式(如果是IIS或是WAS則不需要啟動)，然後對用戶端程式按下右鍵: 
+   
+   `加入 -> 服務參考`
+
+![](https://i.imgur.com/X6iBR0z.png)
+
+2. 跳出加入服務參考的視窗後輸入服務metadata的位置按Go，Visual Studio就會自動幫我們抓到服務，設定一個命名空間名稱，然後按確定。
+   
+![](https://i.imgur.com/pHBFA04.png)
+
+3. 如果在專案列表下面看到有剛剛新增的連接服務(Connected Service)就代表成功囉!
+   
+![](https://i.imgur.com/OAc9lej.png)
+
+#### 用*SvcUtil*產生代理
+*SvcUtil.exe*是一個Command-line的功能，可以用來匯入服務的Metadata以及產生代理。我們必須提供SvcUtil一個MEX端點。
+
+假設我們裝載了一個服務`MyService`在WAS上，然後使用了`HTTP-GET`的方式發佈了服務的Metadata，我們可以在Command-line上輸入: 
+
+```cmd
+SvcUtil http://localhost/MyService/MyService.svc  <- 預設會產生*output.cs*的檔案
+```
+
+如果是自裝載(Self-hosted)，並且我們已經利用`HTTP-GET`在`http://localhost:8000/`上發佈過Metadata，以及設定了以下MEX端點:
+```
+http://localhost:8000/MEX
+http://localhost:8001/MEX
+net.tcp://localhost:8002/MEX
+net.pipe://localhost/MyPipe/MEX
+```
+
+在啟動裝載程式之後，我們可以用下列的命令來產生代理:
+```cmd
+SvcUtil http://localhost:8000 
+SvcUtil http://localhost:8000/MEX 
+SvcUtil http://localhost:8001/MEX 
+SvcUtil net.tcp://localhost:8002/MEX
+SvcUtil net.pipe://localhost/MyPipe/MEX
+```
+
+如果希望可以自定義產生的檔案名稱，需輸入下列指令:
+```cmd
+SvcUtil net.pipe://localhost/MyPipe/MEX /out:Proxy.cs
+```
+
+### 用戶端設定 (Client Configuration)
+用戶端跟服務端之間能夠溝通的條件有: 
+1. 用戶端必須知道服務所在的位置
+2. 用戶端及服務端必須使用一樣的Binding
+
+*Client Config File*
+```xml
+<system.serviceModel>
+    <client>
+        <endpoint name = "FirstEndpoint"
+            address = "http://localhost:8000/MyService"
+            binding = "wsHttpBinding"
+            contract = "IMyContract"
+        />
+        <endpoint name = "SecondEndpoint"
+            address = "net.tcp://localhost:8001/MyService"
+            binding = "netTcpBinding"
+            contract = "IMyContract"
+        />
+        <endpoint name = "ThirdEndpoint"
+            address = "net.tcp://localhost:8002/MyService"
+            binding = "netTcpBinding"
+            contract = "IMyOtherContract"
+        />
+    </client>
+</system.serviceModel>
+```
+
+*加入對Binding的設定*
+```xml
+<system.serviceModel>
+    <client>
+        <endpoint name = "MyEndpoint"
+            address = "net.tcp://localhost:8000/MyService"
+            bindingConfiguration = "TransactionalTCP"
+            binding = "netTcpBinding"
+            contract = "IMyContract"
+        />
+    </client>
+    <bindings>
+        <netTcpBinding>
+            <binding 
+                name = "TransactionalTCP"
+                transactionFlow = "true"
+            />
+        </netTcpBinding>
+    </bindings>
+</system.serviceModel>
+```

@@ -37,7 +37,7 @@ public class JavaClient {
          params.addElement(new Integer(17));
          params.addElement(new Integer(13));
 
-         // 向伺服器發送請求，方法sum(17, 13)在伺服器端被呼叫，回傳的一定會是Object的物件
+         // 向伺服器發送請求，方法sum(17, 13)在服務端被呼叫，回傳的一定會是Object的物件
          // "sample"是伺服器的一個handler
          Object result = server.execute("sample.sum", params);
 
@@ -67,7 +67,7 @@ public class JavaClient {
 </methodCall>
 ```
 
-### XML-RPC 伺服器端
+### XML-RPC 服務端
 ```java
 import org.apache.xmlrpc.*;
 
@@ -98,7 +98,7 @@ public class JavaServer {
 }
 ```
 
-伺服器端接收到用戶端的方法調用請求後，在計算出結果後會回傳以下的XML:
+服務端接收到用戶端的方法調用請求後，在計算出結果後會回傳以下的XML:
 ```xml
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <methodResponse>
