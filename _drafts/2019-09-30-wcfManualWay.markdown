@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 手把手教你用WCF部屬網路服務 (不依賴模板)
+title: 手把手教你寫WCF服務 (不依賴模板)
 categories: [WCF]
 description: 
 keywords: WCF, Windows, Windows Communication Foundation, WCF是什麼
@@ -35,7 +35,7 @@ Visual Studio一堆模板都好好用呀!為啥不用呢? 原因是模板通常�
 接下來我們來分別看看每個元件的實作吧!
 
 ### Service and Data Contract - 服務與資料契約
-因為我們不使用模板的幫助，所以要自己來實作服務及資料契約。
+因為我們不使用模板的幫助，所以要自己來實作服務及資料契約。服務與資料契約呢，簡單來講就是告訴你的用戶你的服務有哪些，用得是甚麼資料型別。
 
 首先，為了能夠使用`DataContract`、`ServiceContractAttribute`及`OperationContract`的屬性，我們必須把`System.ServiceModel`導入專案中:
 
@@ -68,7 +68,7 @@ namespace WCFService
 }
 ```
 
-每個服務契約介面名稱上面必須標註`ServiceContract`的屬性，裡面的方法上面必須標註`OperationContract`的屬性(如果沒標這方法用戶端就無法看到)。
+每個服務契約介面名稱上面必須標註`[ServiceContract]`的屬性，裡面的方法上面必須標註`[OperationContract]`的屬性(如果沒標這方法用戶端就無法看到)。
 
 *StockData.cs*
 ```csharp
@@ -97,5 +97,13 @@ namespace WCFService
         }
     }
 }
+
+每個資料契約的類別名稱上面必須註明`[DataContract]`，類別裡的每個屬性上必須有`[DataMember]`的屬性才可以被辨認為是資料契約的一部分。
+這樣契約部分就建立完成了! 接下來來看實作服務的部分。
+
+### Services - 服務
+訂定好契約之後就要來實作服務，基本上也沒什麼特別的，就是實作介面裡的方法而已。
+
+``
 
 ```
