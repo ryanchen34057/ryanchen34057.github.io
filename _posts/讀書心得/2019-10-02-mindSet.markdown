@@ -1,0 +1,7 @@
+---
+layout:     post
+title: 心態致勝讀書心得  
+categories: [讀書心得]
+description: some word here
+keywords: 
+---
