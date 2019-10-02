@@ -1,13 +1,19 @@
 ---
 layout: post
-title: 心態致勝 Mindset 讀書心得  
+title: 心態致勝 Mindset - 讀書心得  
 categories: [讀書心得]
 description: some word here
 keywords: 
 ---
 
-## 前言
-一開始在
+其實在閱讀這本書以前就有在YouTube上看過作者*Carol S Dweck*的TED Talk，但是就像大部份的TED Talk一樣，看得當下覺得很有道理，然後隔天睡一覺起來就忘了XD
+
+會接觸到這本書是因為公司的讀書會，總共有4次，每次會花2小時左右的時間，公司創辦人Ken及人資主管毓蓉會跟我們剛進公司的新人大家一起坐下來討論書中的內容。
+
+因為之前在Ken的演講有提到一些相關概念，對於閱讀這本書其實我是抱著相當大的期待。
 
 
-[![The Power of Yet](http://img.youtube.com/vi/J-swZaKN2Ic/2.jpg)](https://www.youtube.com/watch?v=J-swZaKN2Ic)
+
+TED Talk at YouTube:
+
+[The Power of Yet](https://www.youtube.com/watch?v=J-swZaKN2Ic)
