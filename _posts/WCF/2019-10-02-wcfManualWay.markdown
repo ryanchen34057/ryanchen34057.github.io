@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 手把手教你寫WCF服務 - IIS裝載(IIS Hosting)及自裝載(Sekf-hosting) (不依賴模板)
+title: 手把手教你寫WCF服務 - IIS裝載(IIS Hosting)及自裝載(Self-hosting) (不依賴模板)
 categories: [WCF]
 description: 
 keywords: WCF, Windows, Windows Communication Foundation, WCF是什麼
