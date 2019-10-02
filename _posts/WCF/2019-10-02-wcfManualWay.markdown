@@ -227,6 +227,7 @@ IIS裝載如果不靠模板的幫助，我們要開一個空白的*ASP.net(.Net 
     <services>
         <service name="WCFService.StockService">
             <!-- 注意 IIS裝載的address是空字串 !-->
+            <!-- 會被IIS的虛擬目錄所取代 -->
             <endpoint
                 address=""
                 binding ="wsHttpBinding"
