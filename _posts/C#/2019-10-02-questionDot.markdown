@@ -8,7 +8,7 @@ keywords: C#,Programming Language,問號點
 
 寫了C#一個多月，今天才看到一個很酷的用法。
 
-以前再寫Java的時候最常碰到的錯誤就是`Null Pointer Exception`，也就是物件在`null`的狀態下我們嘗試去存取裡面的屬性時所產生的錯誤。
+以前在寫Java的時候最常碰到的錯誤就是`Null Pointer Exception`，也就是物件在`null`的狀態下我們嘗試去存取裡面的屬性時所產生的錯誤。
 
 所以以前常常會這樣去防:
 ```java
