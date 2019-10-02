@@ -1,0 +1,89 @@
+---
+layout: post
+title: 在WCF裡使用快取 (Caching in WCF)
+categories: [WCF]
+description: 
+keywords: WCF, Windows, Windows Communication Foundation, 快取, WCF快取, WCF Cache
+---
+
+## 前言
+一般我們如果在使用像是WCF的WebAPI或是資料庫時，如果頻繁的撈取相同的資料，其實會給予伺服器端不必要的負擔。
+
+這時候我們可以好好利用快取這個功能，在用戶端第一次呼叫時就先把資料存在本地端，下一次呼叫就直接從本地端回傳，這樣就可以大大降低伺服器的負擔，也會減少一些等待上的時間。
+
+幸運的是，微軟從.NET 4.0開始推出了進程中(In-process)的快取功能，此功能可以在`System.Runtime.Caching.dll`的組態檔裡找到。
+
+## 用法
+假設有個類別裡有個方法專門回傳一些股票資料:
+```csharp
+public class StockDatas
+{
+    public IEnumerable GetStocks()
+    {
+        return new List() { "台積電", "聯發科", "中華電信" };
+    }
+}
+```
+
+然後這些股票資料可以從我的WCF服務中取得:
+```csharp
+public class StockService : IStockService
+{
+    private const string CacheKey = "givemeStocks";
+ 
+    private StockDatas repository;
+ 
+    public StockService()
+    {
+        this.repository = new StockDatas();
+    }
+ 
+    public IEnumerable GetAllStocks()
+    {
+        // 取得記憶體的快取物件
+        ObjectCache cache = MemoryCache.Default;
+ 
+        // 看看還有沒有快取，沒有的話就新增，有的話回傳快取的資料
+        if(cache.Contains(CacheKey))
+            return (IEnumerable)cache.Get(CacheKey);
+        else
+        {
+            IEnumerable allStocks = repository.GetStocks();
+ 
+            // 將資料存至快取
+            CacheItemPolicy cacheItemPolicy = new CacheItemPolicy();
+
+            // 設定快取失效的時間
+            cacheItemPolicy.AbsoluteExpiration = DateTime.Now.AddHours(1.0);
+            cache.Add(CacheKey, allStocks, cacheItemPolicy);
+ 
+            return allStocks;
+        }
+    }
+}
+```
+快取的使用上其實跟`Dictionary`差不多，一樣就是先`Contains`確認是否`CacheKey`已經存在於快取的物件中，如果有，就直接回傳快取裡的資料，如果沒有，就新建一筆到快取中，蠻容易理解的。
+
+### 快取回收時機 (CacheItemPolicy)
+上述例子的回收時機是採用`AbsoluteExpiration`，也就是時間一到就一定會失效，從快取的記憶體中清出的方式。
+
+而其他還有下列幾種方式可以採用:
+* 指定時間 (`Expiration`類別):
+  1. `AbsoluteExpiration` - 多久之後直接回收
+  2. `SlidingExpiration` - 多久之內沒人取用就回收
+   
+* 監控資料來源 (`ChangeMonitor`類別):
+  1. `HostFileChangeMonitor` - 實體檔案更動時回收(如`.txt`, `.csv`等)
+  2. `SqlChangeMonitor` - 資料庫檔案更動時回收
+  3. `CustomizedChangeMonitor` - 繼承`ChangeMonitor`來自定義監控邏輯
+
+
+其他範例:
+```csharp
+// 3秒期限內未使用快取時，回收快取
+cacheItemPolicy.SlidingExpiration = TimeSpan.FromSeconds(3);
+
+// 資料異動時，回收快取
+cacheItemPolicy.ChangeMonitors.Add(
+    new HostFileChangeMonitor(new List<string>() { filePath }));
+```
