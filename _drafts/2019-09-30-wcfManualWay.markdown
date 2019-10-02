@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 手把手教你寫WCF服務 (不依賴模板)
+title: 手把手教你寫WCF服務 - IIS裝載(IIS Hosting)及自裝載(Sekf-hosting) (不依賴模板)
 categories: [WCF]
 description: 
 keywords: WCF, Windows, Windows Communication Foundation, WCF是什麼
@@ -17,7 +17,9 @@ keywords: WCF, Windows, Windows Communication Foundation, WCF是什麼
 
 寫完之後自己看了一下發現，第一次看的人可能全部看完還是不知道WCF怎麼部屬服務阿XD
 
-所以這篇就是要來Step by Step的教學一下，如果連WCF是什麼都不知道的人記得先讀一下上面的介紹文喔!
+所以這篇就是要來Step by Step的教學一下，如果連WCF是什麼都不知道的人記得先讀一下上面的介紹文喔。
+
+今天會介紹兩種裝載方式，分別是*IIS裝載*及*自裝載*。
 
 ## 為什麼不依賴模板(Template)?
 Visual Studio一堆模板都好好用呀!為啥不用呢? 原因是模板通常會包入很多我們其實不需要的東西，導致整個專案過於肥大，所以我傾向不使用模板，先用最極簡的方式把服務Run起來，之後需要什麼再加就好囉!
@@ -48,24 +50,23 @@ Contracts專案組成，這邊用股票資料來當範例
 * Service Contract 服務契約 : *IStockBroswer.cs* - `interface`
 * Data Contract 資料契約: *StockData.cs* - `class`
 
+![](https://i.imgur.com/KvYgety.png)
+
 **服務契約 - *IStockBroswer.cs***
 ```csharp
 using System.ServiceModel;
-      
+
 namespace WCFService
 {
-    [ServiceContract(Name = "ProductBrowser",
-                     Namespace = "http://WCFService")]
-    public interface IProductBrowser
+    [ServiceContract(Name ="StockBrowser",
+                    Namespace ="http://WCFService/")]
+    public interface IStockBrowser
     {
         [OperationContract]
-        ProductData GetProduct(Guid productID);
-      
+        StockData[] GetStockByID(string stockID);
+
         [OperationContract]
-        ProductData[] GetAllProducts();
-      
-        [OperationContract]
-        ProductData[] FindProducts(string productNameWildcard);
+        StockData[] GetStockByDates(string dateString);
     }
 }
 ```
@@ -80,45 +81,23 @@ http://WCFService/ProductBrowser/{方法名稱}
 **資料契約 - *StockData.cs***
 ```csharp
 using System.Runtime.Serialization;
-      
+
 namespace WCFService
 {
     [DataContract]
-    public class ProductData
+    public class StockData
     {
-        private Guid _ProductID;
-        private string _ProductName;
-        private string _Description;
-        private decimal _UnitPrice;
-      
         [DataMember]
-        public Guid ProductID
-        {
-            get { return _ProductID; }
-            set { _ProductID = value; }
-        }
-      
+        public string StockID { get; private set; }
+
         [DataMember]
-        public string ProductName
-        {
-            get { return _ProductName; }
-            set { _ProductName = value; }
-        }
-      
+        public string StockName { get; private set; }
+
         [DataMember]
-        public string Description
-        {
-            get { return _Description; }
-            set { _Description = value; }
-        }
-      
+        public decimal OpeningPrice { get; private set; }
+
         [DataMember]
-        public decimal UnitPrice
-        {
-            get { return _UnitPrice; }
-            set { _UnitPrice = value; }
-        }
-        
+        public decimal ClosingPrice { get; private set; }
     }
 }
 ```
@@ -129,41 +108,57 @@ namespace WCFService
 ### Services - 服務
 訂定好契約之後就要來實作服務，基本上也沒什麼特別的，就是實作介面裡的方法而已。
 
+為了擴充性，我選擇讓服務單獨一個新的專案。
+
 對了，為了能夠實作服務契約，記得導入`Contracts.dll`喔!
 
 ![](https://i.imgur.com/eumm2C1.png)
 
+Service專案組成:
+* Service 服務: *StockService.cs* -  `class`
+
+![](https://i.imgur.com/JUMDW9Y.png)
+
 
 ```csharp
-using System;
 using System.Collections.Generic;
-using System.ServiceModel;
-      
-namespace WCFService
+using WCFService;
+
+namespace StockService
 {
-    public class ProductService : IProductBrowser
+    public class StockService : IStockBrowser
     {
-        #region IProductBrowser Members
-      
-        public ProductData GetProduct(Guid productID)
+        public StockData[] GetStockByDates(string dateString)
         {
-            ProductData data = null;
-            return data;
+            List<StockData> newList = new List<StockData>();
+            return newList.ToArray();
         }
-      
-        public ProductData[] GetAllProducts()
+
+        public StockData[] GetStockByID(string stockID)
         {
-            List<ProductData> data = new List<ProductData>();
-            return data.ToArray();
+            List<StockData> newList = new List<StockData>();
+            return newList.ToArray();
         }
-      
-        public ProductData[] FindProducts(
-           string productNameWildcard)
-        {
-            List<ProductData> data = new List<ProductData>();
-            return data.ToArray();
-        }
+    }
 }
 ```
 
-如上面所述服務類別只是實作服務契約裡的方法，例子裡的內容沒特別實作什麼，只是符合格式回傳而已。
+如上面所述服務類別只是實作服務契約裡的方法，懶得實作裡面的內容了。
+
+
+### Host - 載體
+下一個要實作的部分是載體，這邊我也會開一個新專案，讓每個功能都能夠獨立出來。
+
+載體可以是*IIS應用程式*、*WAS服務*或是任何Windows的桌面應用程式(Console App、WinForm、WPF等等)。
+
+看你想要用什麼媒介來暴露你的服務。關於載體的選擇請參照:
+
+>https://ryanchen34057.github.io/2019/09/29/wcfIntro1/
+
+IIS或是WAS的設定檔會是`Web.config`，而Windows桌面應用則會是`App.config`。
+
+這次要記得把`Contracts.dll`及`Service.dll`都加入參考。
+
+Host專案組成(自裝載):
+* Program.cs - Console App
+
