@@ -357,7 +357,7 @@ namespace WCFService
 </system.serviceModel>
 ```
 
-都設定完成之後如果我想在我的應用程式裡呼叫IStockBrowser上的方法:
+都設定完成之後，代理的使用方法:
 ```csharp
 StockClient proxy = new StockClient();
 StockData stock = proxy.GetStockByID("2330");
