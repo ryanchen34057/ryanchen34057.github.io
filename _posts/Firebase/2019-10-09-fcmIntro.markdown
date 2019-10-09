@@ -1,0 +1,146 @@
+---
+layout: post
+title: FCM (Firebase Cloud Messaging)簡單介紹
+categories: [FIrebase]
+description: Firebse Cloud Messaging
+keywords: Firebse, Firebase Cloud Messaging, FCM, C#
+---
+
+![](https://miro.medium.com/max/2400/1*rMGumKz0r1UOGC_fApQYKQ.png)
+
+
+## FCM (Firebase Cloud Messaging)是甚麼?
+
+*FIrebase Cloud Messaging*是一個跨平台的傳訊方案，讓我們不用花很多錢或是時間就可以穩定地傳送訊息。
+
+是Google以前的*Google Cloud Messaging API*的升級版(簡稱GCM)。
+
+## FCM主要功能
+* 傳送訊息推播或是資料 - 傳送顯示在使用者裝置上的推播訊息，或是傳送資料到用戶端。
+* 多樣化的訊息傳送對象 - 有三種對象可以選擇: 1. 單一裝置 2. 複數個裝置 3. 訂閱至某個主題的裝置
+* 從用戶端應用回覆訊息 - 透過FCM的溝通channel，從用戶端裝置回覆確認訊息、聊天訊息等至Server端。
+  
+## 整體溝通架構
+
+![](https://firebase.google.com/docs/cloud-messaging/images/messaging-overview.png)
+
+要能做到傳送及接收，主要需要兩大部分:
+
+1. *Trusted Environment* - 例如我們自己寫的App Server、Cloud Function等等。
+2. 用戶端應用程式 - 例如: iOS、Android手機程式，或是網頁程式。
+
+開發者可以透過*[Firebase Admin SDK](https://firebase.google.com/docs/cloud-messaging/server#firebase-admin-sdk-for-fcm)
+*或是*[FCM Server Protocol](https://firebase.google.com/docs/cloud-messaging/server#choose)*來傳送訊息。
+
+## 實作流程
+1. 實作FCM SDK
+2. 開發用戶端App(前端)
+3. 開發Server(後端)
+
+接下來用`C#`來詳解一下SDK的架設方式及Server的實作細節。
+
+### 將Firebase加入自己的Server
+1. 先從.NET Package Manager下載`.NET Admin SDK `
+```console
+Install-Package FirebaseAdmin -Version 1.9.0
+```
+
+2. 用終端機的`dotnet`功能把它下載下來
+```console
+dotnet add package FirebaseAdmin --version 1.9.0
+```
+或是加入以下`xml`到`.csproj`檔案中
+```xml
+<ItemGroup>
+  <PackageReference Include="FirebaseAdmin" Version="1.9.0" />
+</ItemGroup>
+```
+
+3. 初始化SDK
+首先，要初始化SDK必須要新建Firebase的專案，[Firebase連結在此](https://firebase.google.com/)。
+
+因為Firebase專案支援Google的服務帳戶，我們在呼叫Firebase的API時可以用這個來得到請求的認證，呼叫Firebase的API
+
+因此我們必須要授權一個服務帳戶，讓它可以有存取Firebase服務的權限，為此我們必須要生成一個`JSON`格式的*Private Key*。
+
+生成Private Key的步驟:
+1. 打開[Firebase Console](https://console.firebase.google.com/)，到左邊設定(齒輪) -> 服務帳戶
+
+![](https://i.imgur.com/POwnABI.png)
+
+2. 點選**產生新的私密金鑰**
+
+![](https://i.imgur.com/Cvpi78J.png)
+
+3. 將產生的`JSON`檔案存放在一個安全的地方
+
+
+在授權服務帳戶時，有兩種方式讓我們選擇: 
+1. 設定`GOOGLE_APPLICATION_CREDENTIALS`環境變數 -> 建議用這個方式，比較安全
+2. 在程式碼中指定存放服務帳戶金鑰的位置
+
+#### 設定`GOOGLE_APPLICATION_CREDENTIALS`環境變數方式
+在Windows PowerShell設定環境變數。 *注意: PowerShell的環境變數只在目前的session有效，如果關掉了就要再重新設定一次。
+```powershell
+$env:GOOGLE_APPLICATION_CREDENTIALS="C:\Users\username\Downloads\service-account-file.json"
+```
+
+完成上面步驟後我們就可以在程式碼中取得`GOOGLE_APPLICATION_CREDENTIALS`
+```Csharp
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.GetApplicationDefault(),
+});
+```
+也可以用Google的OAuth 2.0 refresh token:
+```csharp
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("path/to/refreshToken.json"),
+});
+```
+
+4. 初始化程式
+
+完成上述的初始化SDK的步驟後，我們就可以來實作伺服器端程式碼:
+
+**初始化一個app**
+```csharp
+// Initialize the default app
+var defaultApp = FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.GetApplicationDefault(),
+});
+Console.WriteLine(defaultApp.Name); // "[DEFAULT]"
+
+// Retrieve services by passing the defaultApp variable...
+var defaultAuth = FirebaseAuth.GetAuth(defaultApp);
+
+// ... or use the equivalent shorthand notation
+defaultAuth = FirebaseAuth.DefaultInstance;
+```
+
+**初始化複數個app**
+```csharp
+// Initialize the default app
+var defaultApp = FirebaseApp.Create(defaultOptions);
+
+// Initialize another app with a different config
+var otherApp = FirebaseApp.Create(otherAppConfig, "other");
+
+Console.WriteLine(defaultApp.Name); // "[DEFAULT]"
+Console.WriteLine(otherApp.Name); // "other"
+
+// Use the shorthand notation to retrieve the default app's services
+var defaultAuth = FirebaseAuth.DefaultInstance;
+
+// Use the otherApp variable to retrieve the other app's services
+var otherAuth = FirebaseAuth.GetAuth(otherApp);
+```
+
+*注意: 每個app實體都有獨立的設定及憑證狀態
+
+###### 資料來源
+[https://firebase.google.com/docs/cloud-messaging/]()
+
+[https://firebase.google.com/docs/admin/setup?authuser=0]()
