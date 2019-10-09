@@ -50,6 +50,7 @@ Install-Package FirebaseAdmin -Version 1.9.0
 dotnet add package FirebaseAdmin --version 1.9.0
 ```
 或是加入以下`xml`到`.csproj`檔案中
+
 ```xml
 <ItemGroup>
   <PackageReference Include="FirebaseAdmin" Version="1.9.0" />
