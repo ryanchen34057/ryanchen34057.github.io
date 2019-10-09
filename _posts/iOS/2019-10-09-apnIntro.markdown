@@ -1,0 +1,62 @@
+---
+layout: post
+title: APNs (Apple Push Notification Service)簡單介紹
+categories: [iOS]
+description: Apple Push Notification Service intro
+keywords: iOS, Cloud Messaging
+---
+
+## APNs (Apple Push Notification Service)介紹
+APNs是一個Apple公司推出的遠端推播功能，讓開發者可以安全、耐用且有效率地傳遞資訊給iOS、tvOS、macOS等Apple推出的裝置。
+
+當使用者在裝置上初次啟動App後，系統就會在app及APNs之間自動建立一個加密過的IP連線，這個連線讓我們的app可以接收到通知。
+
+而另外一端的連線會負責傳送通知，需要在[開發者帳戶](https://idmsa.apple.com/IDMSWebAuth/signin?appIdKey=891bd3417a7776362562d2197f89480a8547b108fd934911bcbea0110d07f757&path=%2Faccount%2F&rv=1)中進行一些設定及利用Apple提供的加密過的憑證。
+
+*Provider*就是我們後端在寫的Server的意思，我們需要設定這個Server來跟APNs接上線。
+
+![](https://i.imgur.com/Eq8zv1F.png)
+
+做好推播的設定後，Provider就可以推送通知請求給APNs，APNs會再把相對應的payload轉傳給目標裝置。
+
+就算目標裝置上的app沒有在運作，但是只要手機是開著的，通知就還是會顯示在使用者手機上。但如果電源是關著的，APNs就會將通知的payload先留著，之後再做嘗試。
+
+### Provider要做的事
+* 從APNs接收所有正在運行app的使用者裝置實體，取得每個裝置的`token`
+* 決定推播要什麼時候進行發送。
+* 建立及傳送請求到APNs，每個請求會包含APNs所能接受的payload及傳送資訊。APNs之後會把通知再傳送到目標裝置。
+
+**通知請求格式**
+1. 建立一個`JSON Dictionary`，包含有通知的payload:
+   看一下下面的payload範例，裡面最重要的就是`aps`的`dictionary`，包含了Apple所定義的金鑰及系統推播通知給使用者的方式。
+   下面的payload還有一個叫`acme2`的`key`，用來裝app的自定義資料。   
+   ```json
+   {
+        "aps" : { "alert" : "Message received from Bob" },
+        "acme2" : [ "bang",  "whiz" ]
+    }
+   ```
+   *注意: 雖然上面的範例有用空白鍵隔開，但這只是為了易讀性，實務上要避免加入空白鍵，以減少payload的大小。
+   
+   其他範例請看: [Local and Remote Notification Programming Guide](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW1)
+
+   ### Quality of Service功能 (QoS)
+   QoS讓APNs在目標裝置offline時，先將payload存放一段時間，等裝置再度啟動後才傳送。但如果之前已經有一個請求存在，那傳送新的請求將會把舊的請求給蓋掉。
+
+   如果payload已經存放超過設定的時間目標裝置都沒有重新啟動，payload將會被釋放掉。
+
+   ### 安全性架構
+   Provider及APNs及用戶端裝置彼此之間都必須要是可信任的連線。
+
+   Provider及APNs之間要建立一個有效的認證金鑰或是SSL憑證，兩個都可以從[開發者帳戶](https://idmsa.apple.com/IDMSWebAuth/signin?appIdKey=891bd3417a7776362562d2197f89480a8547b108fd934911bcbea0110d07f757&path=%2Faccount%2F&rv=1)中取得。
+
+   而與用戶端裝置建立連線則是需要`Device token trust`，它會確保推播的來源來自可信任的Provider及推送至正確的裝置。
+
+   *Device token*是一個[`NSData`](https://developer.apple.com/library/archive/documentation/LegacyTechnologies/WebObjects/WebObjects_3.5/Reference/Frameworks/ObjC/Foundation/Classes/NSDataClassCluster/Description.html#//apple_ref/occ/cl/NSData)的實體，一般是被Apple指定給擁有特定app的裝置。(每個裝置上的每個app都會有一個獨特的Device token)。
+
+   APNs會在以下情況下再發行一個新的Device token:
+   * 使用者在新的裝置上安裝了你的app
+   * 使用者從備份中回復
+   * 使用者重新安裝了作業系統
+   * 其他系統定義的事件
+
