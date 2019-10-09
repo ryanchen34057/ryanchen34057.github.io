@@ -40,23 +40,23 @@ APNs是一個Apple公司推出的遠端推播功能，讓開發者可以安全�
    
    其他範例請看: [Local and Remote Notification Programming Guide](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW1)
 
-   ### Quality of Service功能 (QoS)
-   QoS讓APNs在目標裝置offline時，先將payload存放一段時間，等裝置再度啟動後才傳送。但如果之前已經有一個請求存在，那傳送新的請求將會把舊的請求給蓋掉。
+### Quality of Service功能 (QoS)
+QoS讓APNs在目標裝置offline時，先將payload存放一段時間，等裝置再度啟動後才傳送。但如果之前已經有一個請求存在，那傳送新的請求將會把舊的請求給蓋掉。
 
-   如果payload已經存放超過設定的時間目標裝置都沒有重新啟動，payload將會被釋放掉。
+如果payload已經存放超過設定的時間目標裝置都沒有重新啟動，payload將會被釋放掉。
 
-   ### 安全性架構
-   Provider及APNs及用戶端裝置彼此之間都必須要是可信任的連線。
+### 安全性架構
+Provider及APNs及用戶端裝置彼此之間都必須要是可信任的連線。
 
-   Provider及APNs之間要建立一個有效的認證金鑰或是SSL憑證，兩個都可以從[開發者帳戶](https://idmsa.apple.com/IDMSWebAuth/signin?appIdKey=891bd3417a7776362562d2197f89480a8547b108fd934911bcbea0110d07f757&path=%2Faccount%2F&rv=1)中取得。
+Provider及APNs之間要建立一個有效的認證金鑰或是SSL憑證，兩個都可以從[開發者帳戶](https://idmsa.apple.com/IDMSWebAuth/signin?appIdKey=891bd3417a7776362562d2197f89480a8547b108fd934911bcbea0110d07f757&path=%2Faccount%2F&rv=1)中取得。
 
-   而與用戶端裝置建立連線則是需要`Device token trust`，它會確保推播的來源來自可信任的Provider及推送至正確的裝置。
+而與用戶端裝置建立連線則是需要`Device token trust`，它會確保推播的來源來自可信任的Provider及推送至正確的裝置。
 
-   *Device token*是一個[`NSData`](https://developer.apple.com/library/archive/documentation/LegacyTechnologies/WebObjects/WebObjects_3.5/Reference/Frameworks/ObjC/Foundation/Classes/NSDataClassCluster/Description.html#//apple_ref/occ/cl/NSData)的實體，一般是被Apple指定給擁有特定app的裝置。(每個裝置上的每個app都會有一個獨特的Device token)。
+*Device token*是一個[`NSData`](https://developer.apple.com/library/archive/documentation/LegacyTechnologies/WebObjects/WebObjects_3.5/Reference/Frameworks/ObjC/Foundation/Classes/NSDataClassCluster/Description.html#//apple_ref/occ/cl/NSData)的實體，一般是被Apple指定給擁有特定app的裝置。(每個裝置上的每個app都會有一個獨特的Device token)。
 
-   APNs會在以下情況下再發行一個新的Device token:
-   * 使用者在新的裝置上安裝了你的app
-   * 使用者從備份中回復
-   * 使用者重新安裝了作業系統
-   * 其他系統定義的事件
+APNs會在以下情況下再發行一個新的Device token:
+* 使用者在新的裝置上安裝了你的app
+* 使用者從備份中回復
+* 使用者重新安裝了作業系統
+* 其他系統定義的事件
 
