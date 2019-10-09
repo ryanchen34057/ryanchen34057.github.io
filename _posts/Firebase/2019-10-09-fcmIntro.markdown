@@ -41,21 +41,21 @@ keywords: Firebse, Firebase Cloud Messaging, FCM, C#
 
 ### 將Firebase加入自己的Server
 1. 先從.NET Package Manager下載`.NET Admin SDK `
-```console
-Install-Package FirebaseAdmin -Version 1.9.0
-```
+    ```console
+    Install-Package FirebaseAdmin -Version 1.9.0
+    ```
 
 2. 用終端機的`dotnet`功能把它下載下來
-```console
-dotnet add package FirebaseAdmin --version 1.9.0
-```
-或是加入以下`xml`到`.csproj`檔案中
+    ```console
+    dotnet add package FirebaseAdmin --version 1.9.0
+    ```
+    或是加入以下`xml`到`.csproj`檔案中
 
-```xml
-<ItemGroup>
-  <PackageReference Include="FirebaseAdmin" Version="1.9.0" />
-</ItemGroup>
-```
+    ```xml
+    <ItemGroup>
+    <PackageReference Include="FirebaseAdmin" Version="1.9.0" />
+    </ItemGroup>
+    ```
 
 3. 初始化SDK
 首先，要初始化SDK必須要新建Firebase的專案，[Firebase連結在此](https://firebase.google.com/)。
