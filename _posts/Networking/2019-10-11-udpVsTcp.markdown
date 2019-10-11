@@ -1,0 +1,86 @@
+---
+layout: post
+title: UDP vs TCP
+categories: [Networking]
+description: UDP與TCP的差別
+keywords: UDP, TCP, 網際網路
+---
+
+## 什麼是UDP和TCP?
+UDP及TCP是[網際網路協議](https://zh.wikipedia.org/wiki/TCP/IP协议族)，在[OSI模型](https://zh.wikipedia.org/wiki/OSI%E6%A8%A1%E5%9E%8B)中屬於**傳輸層**(Transport Layer)。
+
+什麼又是OSI模型呢?
+
+## OSI模型
+OSI模型將電腦網路體系分為以下七層，第1層在底部。而本篇要介紹的就在**第4層的傳輸層(Transport Layer)**。
+
+![](https://miro.medium.com/max/1024/1*17Zz6v0HWIzgiOzQYmO6lA.jpeg)
+>圖片來源: [網址](https://medium.com/@int0x33/day-51-understanding-the-osi-model-f22d5f3df756)
+
+*注意: 5的會議層(Session Layer)及6的表現層(Presentation Layer)目前已被棄用，所以**現在正確來說是有五層**。
+
+我們先省略其他層的介紹，只要知道TCP及UDP是屬於傳輸層的就好了。
+
+## 為什麼我們需要傳輸層?
+有想過我們電腦裡的應用程式那麼多，它們為什麼可以共用一個網路連線呢?
+
+這件事就需要我們的傳輸層的幫助!
+
+傳輸層會在我們的電腦網路開啟許多[埠(Port)](https://zh.wikipedia.org/wiki/TCP/UDP%E7%AB%AF%E5%8F%A3%E5%88%97%E8%A1%A8)，有點類似挖很多的洞，每個洞都有各自的編號，這樣應用程式在傳輸的時候才知道要傳到哪裡。
+
+
+## UDP (User Datagram Protocol)
+UDP又稱用戶資料包協定，是一個簡單的資料導向的通訊協定。
+
+UDP為網路層以上和應用層以下提供了一個簡單的介面，只提供**資料的不可靠傳遞**，它一旦把應用程式發給網路層的資料傳送出去，就不保留資料備份。
+
+### UDP的好處
+* 較小的封包大小
+    * UDP header: 8 bytes
+    * TCP header: 20 bytes
+* 傳送資料之前不需要先建立連線
+* 更能掌握對資料傳送的時間點
+
+### UDP的壞處
+* 無法將錯誤的封包回復 - 如果出現錯誤的封包，UDP無法將其回復，只能丟掉。(所以叫做不可靠傳遞)
+* 如果在傳送封包時網路連線出現問題，UDP不會重新傳送
+* 封包到達的順序有機會跟傳送時不同
+* 資料堵塞時沒有解決方案 - 因為資料堵塞時更容易遺失封包，所以資料更容易不見
+
+為了解決UDP的問題，TCP就出現了!
+
+## TCP (Transmission Control Protocol)
+TCP導入了一個叫做三向交握的機制(Three-way Handshake)，運作流程大概如下:
+
+1. 傳送者會先跟欲傳送的目標機器發送連接請求，等接收到回覆後再回傳表示收到回覆了
+2. 目標機器接收到請求後如果同意連接就會回覆給傳送者
+3. 傳送者接收到回覆後會再回傳表示收到回覆，此時連接就建立完成!
+
+### TCP的好處
+TCP導入三項交握這機制有一些好處:
+* 支援重新發送 - 傳送者在傳送過後會需要目標機器的回覆代表發送成功，如果沒有得到回覆就代表傳送失敗，過一陣子會再傳一次。
+* 支援in order delivery - 意思就是每個資料會有編碼，所以就算到達目標機器時資料順序已經亂掉了，TCP有辦法將其順序還原。
+* 解決資料堵塞的機制 - 當連線堵塞時，TCP會延遲傳送的時間
+* 支援錯誤偵測 - 要求資料必須要有[校驗碼(Checksum)](https://zh.wikipedia.org/zh-tw/%E6%A0%A1%E9%AA%8C%E5%92%8C)
+
+### TCP的壞處
+* 較大的header (比UDP大6成)
+* 資料不是都會馬上被送出 - 因為TCP會在資料堵塞時延遲傳送
+* 較大的傳輸成本 - 因為必須支援重新發送及檢驗封包的功能
+
+## 訊息(Messages) vs 流(Streams)
+* UDP為訊息導向(Message-oriented)
+  -> 每個資料都被當作是一大包東西
+
+* TCP為資料流導向(Stream-oriented)
+  -> 資料流的概念
+  -> 被TCP分為一小段一小段
+
+## TCP使用情境
+* 訊息類App - 因為支援順序還原
+* 任何不能允許資料遺失的情況 - 檔案傳輸、遠端存取
+* 多媒體串流 - 當TCP較高的成本不會是個問題時
+
+## UDP使用情境
+* 多媒體串流 - 因為較小的成本、不用擔心TCP的延遲傳送
+* DNS查詢等不需要開啟連線及關閉連線的動作
