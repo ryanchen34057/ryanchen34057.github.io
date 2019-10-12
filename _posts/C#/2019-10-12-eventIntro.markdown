@@ -190,7 +190,7 @@ public class Program
 ```
 
 測試結果如下:
-```console
+```
 1 GenerateReports
 2 GenerateReports
 3 GenerateReports
