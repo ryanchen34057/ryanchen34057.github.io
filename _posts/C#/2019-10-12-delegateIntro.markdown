@@ -33,7 +33,7 @@ public enum WorkType
 }
 ```
 
-剛剛有提到Delegate其實就是一個傳遞的橋樑，所以上面的例子只是把`hour`及`workType`這兩個資料透過`WorkPerformedHandler`這個方法傳遞給接收者(Handler)，接收者必須要有相同數量及型別的參數(變數名稱不受限制):
+剛剛有提到Delegate其實就是一個傳遞的橋樑，所以上面的例子只是把`hour`及`workType`這兩個資料透過`WorkPerformedHandler`這個方法傳遞給接收者，接收者必須要有相同數量及型別的參數(變數名稱不受限制):
 ```csharp
 // Handler
 public void WorkPerformed1(int workHours, WorkType wtype) 

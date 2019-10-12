@@ -49,7 +49,7 @@ if(del != null)
 }
 ```
 
-以下是完整的範例:
+以下是範例:
 
 ```csharp
 public delegate void WorkPerformedHandler(int hours, WorkType workType);
@@ -81,4 +81,123 @@ public class Worker
         }
     }
 }
+```
+
+## 使用EventArgs
+一般比較建議的做法是讓EventHandler有以下的格式:
+```csharp
+public delegate void WorkPerformedHandler(object sender, EventArgs e);
+```
+
+`sender`代表啟動Event的方法，而`EventArgs`則是Event自帶的資料。
+
+如果要自己定義這個`EventArgs`，我們可以自己寫一個類別，然後來繼承至`System.EventArgs`:
+
+```csharp
+public class WorkPerformedEventArgs : System.EventArgs
+{
+    public int Hours {get; set; }
+    public WorkType WorkType {get; set; }
+}
+```
+
+## 使用EventHandler來註冊及觸發Event
+如果沒看過*EventHandler*請參照: [C# EventHandler 介紹](https://ryanchen34057.github.io/2019/10/12/eventHandlerIntro/)
+
+首先我們可以將`delegate`的`WorkPerformedHandler`改寫成以下的程式碼:
+```csharp
+public event EventHandler<WorkPerformedEventArgs> WorkPerformed;
+```
+
+我們可以透過以下的方式來註冊`EventHandler`到`Worker`類別:
+```csharp
+var worker = new Worker();
+worker.WorkPerformed += 
+    new EventHandler<WorkPerformedEventArgs>(worker_WorkPerformed);
+
+void worker_WorkPerformed(object sender, WorkPerformedEventArgs e)
+{
+    Console.WriteLine(e.Hours.ToString());
+}
+```
+
+## 完整範例
+接下來來改寫一下上面的`Worker`類別，然後做一個簡單的Demo:
+```csharp
+//public delegate void WorkPerformedHandler(int hours, WorkType workType);
+public class Worker
+{
+    public event EventHandler<WorkPerformedEventArgs> WorkPerformed; // Event的定義
+    public event EventHandler WorkCompleted; 
+
+    public virtual void DoWork(int hours, WorkType workType)
+    {
+        for(int i = 0;i < hours; i++)
+        {
+            // 每小時通知一次
+            OnWorkPerformed(i + 1, workType);
+        }
+        // 結束時再通知一次
+        OnWorkCompleted();
+        
+    }
+
+    protected virtual void OnWorkPerformed(int hours, WorkType workType)
+    {
+       var del = WorkPerformed as EventHandler<WorkPerformedEventArgs>;
+       if(del != null)
+       {
+           del(this, new WorkPerformedEventArgs(hours, workType))
+       }
+    }
+
+    protected virtual void OnWorkCompleted()
+    {
+        var del = WorkCompleted as EventHandler;
+        if(del != null)
+        {
+            del(this, EventArgs.Empty); // 如果不打算帶資料可以使用EventArgs.Empty
+        }
+    }
+}
+```
+
+然後寫一個簡單的Console App來測試一下結果:
+```csharp
+public class Program
+{
+    public static void Main()
+	{
+		var worker = new Worker();
+        worker.WorkPerformed += new EventHandler<WorkPerformedEventArgs>(Worker_WorkPerformed);
+        worker.WorkCompleted += new EventHandler(Worker_WorkCompleted);
+        worker.DoWork(8, WorkType.GenerateReports);
+
+        Console.Read();
+
+	}
+
+    public static void Worker_WorkPerformed(object sender, WorkPerformedEventArgs e)
+    {
+        Console.WriteLine(e.Hours + " " + e.WorkType);
+    }
+
+    public static void Worker_WorkCompleted(object sender, EventArgs e)
+    {
+        Console.WriteLine("Work Completed!");
+    }
+}
+```
+
+測試結果如下:
+```console
+1 GenerateReports
+2 GenerateReports
+3 GenerateReports
+4 GenerateReports
+5 GenerateReports
+6 GenerateReports
+7 GenerateReports
+8 GenerateReports
+Work Completed!
 ```
