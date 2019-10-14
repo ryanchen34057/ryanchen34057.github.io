@@ -68,6 +68,3 @@ public class Author
     }
 }
 ```
-
-## 用Lazy來實作Singleton
-我們可以透過`Lazy`的特性來實作`Singleton`
