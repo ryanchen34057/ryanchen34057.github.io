@@ -1,7 +1,7 @@
 ---
 layout: post
 title: FCM (Firebase Cloud Messaging)簡單介紹
-categories: [FIrebase]
+categories: [Firebase]
 description: Firebse Cloud Messaging
 keywords: Firebse, Firebase Cloud Messaging, FCM, C#
 ---
@@ -67,11 +67,11 @@ keywords: Firebse, Firebase Cloud Messaging, FCM, C#
 生成Private Key的步驟:
 1. 打開[Firebase Console](https://console.firebase.google.com/)，到左邊設定(齒輪) -> 服務帳戶
 
-![](https://i.imgur.com/POwnABI.png)
+    ![](https://i.imgur.com/POwnABI.png)
 
 2. 點選**產生新的私密金鑰**
 
-![](https://i.imgur.com/Cvpi78J.png)
+    ![](https://i.imgur.com/Cvpi78J.png)
 
 3. 將產生的`JSON`檔案存放在一個安全的地方
 
