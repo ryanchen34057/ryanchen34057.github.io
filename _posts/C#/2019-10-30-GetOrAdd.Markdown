@@ -1,0 +1,68 @@
+---
+layout:     post
+title: C# ConcurrentDictionary - GetOrAdd的用法  
+categories: [C#]
+description: some word here
+keywords: C#,Programming Language
+---
+
+大家都知道`.NET`有執行緒安全版的`Dictionary`，也就是`ConcurrentDictionary`。
+
+`ConcurrentDictionary`裡面的方法都包的好好的，讓我們可以不用`lock`就達到執行緒安全的效果。
+
+但是請問以下程式碼有執行緒安全嗎?
+
+```csharp
+ConcurrentDictionary<string, long> myDict = new ConcurrentDictionary<string, long>();
+
+long result;
+if(!myDict.TryGetValue("big", out result))
+{
+    result = GenerateSomeVeryBigNum();
+    myDict.TryAdd(someVeryBigNum);
+}
+return result
+```
+
+答案是沒有!!
+
+因為想像如果有兩條執行緒A跟B同時去存取`ConcurrentDictionary`時，因為裡面的鍵值都還沒被創建，所以A跟B都會跑到`if`裡面去執行`GenerateSomeVeryBigNum()`的方法。
+
+這樣會造成一件事要做兩次的情況，所以我們不能把查詢跟新增這兩件事情分開做，因為我們並不知道查詢跟新增中間哪條執行緒還會來存取一樣的資源!
+
+幸好`ConcurrentDictionary`有`GetOrAdd`可以使用，用法也很簡單，只要把上面的程式碼改成:
+```csharp
+ConcurrentDictionary<string, long> myDict = new ConcurrentDictionary<string, long>();
+
+long result = myDict.GetOrAdd("big", 
+    key => 
+        {
+            return GenerateSomeVeryBigNum();
+        } );
+return result
+```
+
+這樣第一個參數是帶key，第二個參數是帶一個`Func<T>`的委派，意思就是如果有找到一樣的key就直接回傳他的值，如果沒有找到就用`Func<T>`的方法**回傳要新增的值進去**。
+
+但是這樣做其實還會有一個問題，假設在兩條執行緒同時去向`ConcurrentDictionary`問同一個尚未存在的值時，這兩條執行緒會先把要新增的值創建出來，然後因為有兩條執行緒都要新增，所以有其中一個值會被捨棄掉。
+
+假如創建這個值的成本很低那倒還好，但是假設創建的過程會牽扯到IO或是Web Request等耗費比較大的操作時就不建議用這個做法了!
+
+那要怎麼解呢? 我們可以用延遲實體化的`Lazy`這個類別! (延伸閱讀: [C# 利用延遲實體化(Lazy Initialization)來節省資源及提升效能](https://ryanchen34057.github.io/2019/10/09/lazyExample/))
+
+先來看個範例:
+
+```csharp
+dictionary.GetOrAdd(
+        key, 
+        () => new Lazy<MyValue>(() => new MyValue(key)));
+```
+我們只要把`ConcurrentDictionary`裡面的值用`Lazy`包起來就可以了!
+
+`Lazy`這個類別的特性是在創建時並不會真的去生成裡面的東西，當我們去存取它裡面的值的時候裡面的值才會被生成出來。
+
+```csharp
+MyValue value = dictionary.GetOrAdd(
+    key, 
+    () => new Lazy<MyValue>(() => new MyValue(key))).Value;
+```
