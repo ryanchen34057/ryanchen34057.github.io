@@ -68,7 +68,7 @@ using(var response = await httpClient.SendAsync(request, HttpCompletion.Response
 }
 ```
 
-## Extension Method
+## ReadAndSerialize Extension Method
 我們可以將讀取轉換`json`物件部分的程式碼寫成一個`Extension Method`，避免過多重複的程式碼:
 ```csharp
 public static class StreamExtensions
@@ -94,4 +94,98 @@ public static class StreamExtensions
         }
     }
 }
+```
+
+## 用Stream來傳送資料
+除了讀取`Get`回來的資料，我們當然也可以用`Stream`來傳送`Post`的資料:
+```csharp
+// 生成隨機的byte序列
+var random = new Random();
+var generatedBytes = new byte[524288];
+random.NextBytes(generatedBytes);
+
+var posterForCreation = new PosterForCreation()
+{
+    Name = "A new poster for the Big Lebowski",
+    Bytes = generatedBytes
+};
+
+// 要傳送的byte stream
+var memoryContentStream = new MemoryStream();
+using(var streamWriter = new StreamWriter(memoryContentStream,
+    new UTF8Encoding(), 1024, true))
+{
+    using(var jsonTextWriter = new JsonTextWriter(streamWriter))
+    {
+        var jsonSerializer = new JsonSerializer();
+        jsonSerializer.Serialize(jsonNextWriter, posterForCreation);
+        jsonTextWriter.Flush(); // 不Flush就有可能會有不完整或是空的Stream
+    }
+}
+```
+
+## WriteAndSerialize Extension Method
+我們一樣可以將上面的程式碼寫成Extension Method:
+```csharp
+public static void SerializeToJsonAndWrite<T>(this Stream stream, T objectToWrite)
+{
+    if(stream == null)
+    {
+        throw new ArgumentNullException(nameof(stream));
+    }
+    if(!stream.CanWrite)
+    {
+        throw new NotSupportedException("Can't write to this stream.");
+    }
+    using(var streamWriter = new StreamWriter(stream, new UTF8Encoding(), 1024, true))
+    {
+        using(var jsonTextWriter = new JsonTextWriter(streamWriter))
+        {
+            var jsonSerializer = new JsonSerializer();
+            jsonSerializer.Serialize(jsonNextWriter, objectToWrite);
+            jsonTextWriter.Flush();
+        }
+    }
+}
+```
+
+然後要改寫一下我們的`Post`請求:
+```csharp
+// 生成隨機的byte序列
+var random = new Random();
+var generatedBytes = new byte[524288];
+random.NextBytes(generatedBytes);
+
+var posterForCreation = new PosterForCreation()
+{
+    Name = "A new poster for the Big Lebowski",
+    Bytes = generatedBytes
+};
+
+// 要傳送的byte stream
+var memoryContentStream = new MemoryStream();
+memoryContentStream.SerializeToJsonAndWrite(posterForCreation);
+
+// 將Stream的Index目前所在的位置調回最前面
+memoryContentStream.Seek(0, SeekOrigin.Begin);
+
+using(var request = new HttpRequestMessage(
+    HttpMethod.Post,
+    "api/movies/r46we-r434t856-hytr-4gs4"))
+    {
+        request.Headers.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
+        using (var streamContent = new StreamContent(memoryContentStream))
+        {
+            request.Content = streamContent;
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var response = await httpClient.SendAsync(request);
+            request.EnsureSuccessStatusCode();
+
+            var createdContent = await response.Content.ReadAsStringAsync();
+            var createdPoster = JsonConvert.DeserializeObject<Poster>(createdContent);
+        }
+    }
+))
 ```
