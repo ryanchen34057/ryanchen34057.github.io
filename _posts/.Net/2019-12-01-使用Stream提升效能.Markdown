@@ -1,0 +1,97 @@
+---
+layout: post
+title: 使用Stream提升呼叫API時的效能
+categories: [.Net]
+description: some word here
+keywords: 
+---
+## Stream是什麼?
+`Stream`是*一個抽象的`byte`資料的序列*。例如檔案、輸入/輸出裝置或是網路傳輸等。
+
+## Stream的好處
+利用`Stream`我們可以直接將最原始的資料讀取進來，而不用先轉換成基本資料型態，這樣能夠節省記憶體的空間。
+
+例如我們在呼叫API時，用`SendAsync`將資料`Get`回來後會是一個`HttpResponseMessage`的實體，此時必須再呼叫`ReadStringAsync`才能夠把內容轉為字串讀取出來。
+這樣如果內容越龐大，那將其轉為字串的成本代價就會提高。
+如果使用`Stream`我們就可以繞過此步驟，直接對資料的`Byte`序列去做操作:
+
+![](https://i.imgur.com/UzKR3zW.png)
+
+## 用Stream來讀取API Response
+```csharp
+HttpClient httpClient = new Httpclient();
+var request = new HttpRequestMessage(HttpMethod.Get, $"api/movie/qwe46-e4wq46-4wqeyh48");
+request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+// 使用Stream時最好都要用`using`
+using(var response = await httpClient.SendAsync(request))
+{
+    response.EnsureSuccessStatusCode();
+
+    var stream = await response.Content.ReadAsStreamAsync();
+
+    using(var streamReader = new StreamReader(stream))
+    {
+        // 使用JsonTextReader來讀取Stream
+        using(var jsonTextReader = new JsonTextReader(streamReader))
+        {
+            var jsonSerializer = new JsonSerializer();
+            var poster = jsonSerializer.Deserialize<Poster>(jsonTextReader);
+
+            // do something with the poster
+        }
+    }
+}
+```
+
+## 使用HttpCompletionMode提升效能
+如果是用Stream來讀取，我們可以不用將所有的內容都讀完才進行轉換，只要確保`header`有到就可以了!
+這時我們可以加上`HttpCompletion.ResponseRead`在`SendASync`的參數中:
+```csharp
+using(var response = await httpClient.SendAsync(request, HttpCompletion.ResponseRead))
+{
+    response.EnsureSuccessStatusCode();
+
+    var stream = await response.Content.ReadAsStreamAsync();
+
+    using(var streamReader = new StreamReader(stream))
+    {
+        // 使用JsonTextReader來讀取Stream
+        using(var jsonTextReader = new JsonTextReader(streamReader))
+        {
+            var jsonSerializer = new JsonSerializer();
+            var poster = jsonSerializer.Deserialize<Poster>(jsonTextReader);
+
+            // do something with the poster
+        }
+    }
+}
+```
+
+## Extension Method
+我們可以將讀取轉換`json`物件部分的程式碼寫成一個`Extension Method`，避免過多重複的程式碼:
+```csharp
+public static class StreamExtensions
+{
+    public static T ReadAndDeseirializeFromJson<T>(this Stream stream)
+    {
+        if(stream == null)
+        {
+            throw new ArgumentNullException(nameof(stream));
+        }
+        if(!stream.CanRead)
+        {
+            throw new NotSupportedException("Can't read from this stream");
+        }
+        using(var streamReader = new StreamReader(stream))
+        {
+            using(var jsonTextReader = new JsonTextReader(streamReader))
+            {
+                var jsonSerializer = new JsonSerializer();
+                return  jsonSerializer.Deserialize<T>(jsonTextReader);
+            }
+        
+        }
+    }
+}
+```

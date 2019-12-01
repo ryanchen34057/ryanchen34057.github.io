@@ -1,7 +1,7 @@
 ---
 layout: post
-title: .NET Core - 用HttpClient呼叫API
-categories: [.Net Core]]
+title: 用HttpClient呼叫API
+categories: [.Net]
 description: some word here
 keywords: 
 ---
